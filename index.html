@@ -314,24 +314,25 @@
             elements.width.value = widthVal;
             elements.length.value = lengthVal;
 
-            // Voor de preview en labels willen we +1% tonen
-            const displayWidth = hasExtraLength ? widthVal * 1.01 : widthVal;
-            const displayLength = hasExtraLength ? lengthVal * 1.01 : lengthVal;
+            // Voor de preview en labels willen we +1% tonen (maar niet in de prijs)
+            const displayW = hasExtraLength ? widthVal * 1.01 : widthVal;
+            const displayL = hasExtraLength ? lengthVal * 1.01 : lengthVal;
 
-            // Schaal berekenen op basis van de maximale breedte/hoogte
-            const widthScale = CONFIG.previewWidth / CONFIG.maxWidth;
-            const lengthScale = CONFIG.previewHeight / CONFIG.maxLength;
+            // Gebruik één schaalfactor, zodat de verhouding klopt
+            const scale = Math.min(
+                CONFIG.previewWidth / displayW,
+                CONFIG.previewHeight / displayL
+            );
 
-            // Afmetingen in de preview
-            elements.rectangle.style.width = `${displayWidth * widthScale}px`;
-            elements.rectangle.style.height = `${displayLength * lengthScale}px`;
+            // Stel de afmetingen van de rechthoek in op basis van de schaal
+            elements.rectangle.style.width = (displayW * scale) + 'px';
+            elements.rectangle.style.height = (displayL * scale) + 'px';
 
-            // Labels tonen met of zonder +1%
-            elements.widthLabel.textContent = `${Math.round(displayWidth)} cm`;
-            elements.lengthLabel.textContent = `${Math.round(displayLength)} cm`;
+            // Update labels (afgerond)
+            elements.widthLabel.textContent = `${Math.round(displayW)} cm`;
+            elements.lengthLabel.textContent = `${Math.round(displayL)} cm`;
 
             // Prijsberekening (zonder de +1% extra)
-            // Let op: breedte en lengte zijn in cm, dus omzetten naar meter: /100
             const price = ((widthVal / 100) * (lengthVal / 100) * CONFIG.pricePerM2 * quantity).toFixed(2);
             elements.price.textContent = `€${price}`;
         }

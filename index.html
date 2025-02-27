@@ -3,52 +3,55 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configurator Transparante Plastiek</title>
+    <title>Configurator - Doorzichtig Tafelzeil</title>
     <style>
         body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4; }
-        .container { max-width: 600px; margin: 50px auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); }
+        .container { max-width: 900px; margin: 50px auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); display: flex; }
+        .config-section { flex: 1; padding: 10px; }
+        .image-section { flex: 1; display: flex; justify-content: center; align-items: center; }
+        .image-section img { max-width: 100%; border-radius: 8px; }
         label { display: block; margin-top: 10px; font-weight: bold; }
         input { width: 80px; padding: 5px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; text-align: center; }
-        .config-section { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
         .preview-container { display: flex; flex-direction: column; align-items: center; }
         .preview { position: relative; margin-top: 20px; text-align: center; }
-        .preview div { display: inline-block; background-color: rgba(0, 0, 255, 0.2); border: 1px solid blue; position: relative; }
-        .dimension-label { position: absolute; background-color: #007bff; color: white; padding: 2px 5px; font-size: 12px; border-radius: 3px; }
+        .preview div { display: inline-block; background-color: rgba(0, 0, 255, 0.2); border: 1px solid #000080; position: relative; }
+        .dimension-label { position: absolute; background-color: #000080; color: white; padding: 2px 5px; font-size: 12px; border-radius: 3px; }
         .vertical-label { left: -30px; top: 50%; transform: translateY(-50%); }
         .horizontal-label { top: 100%; left: 50%; transform: translateX(-50%); }
         .price { font-size: 20px; font-weight: bold; margin-top: 10px; text-align: center; }
         button { display: block; width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 15px; }
-        button:hover { background-color: #0056b3; }
+        button:hover { background-color: #000060; }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2>Configurator - Transparante Plastiek</h2>
         <div class="config-section">
+            <h2>Configurator - Doorzichtig Tafelzeil</h2>
             <label for="width">Breedte (cm) - Max 140cm:</label>
             <input type="number" id="width" min="10" max="140" value="100">
-        </div>
-        
-        <div class="config-section">
+            
             <label for="length">Lengte (cm) - Max 2000cm:</label>
             <input type="number" id="length" min="10" max="2000" value="100">
-        </div>
-        
-        <label><input type="checkbox" id="extraLength"> Ik wil 1% gratis extra lengte</label>
-        
-        <div class="preview-container">
-            <h3>Voorbeeld:</h3>
-            <div class="preview">
-                <div id="rectangle">
-                    <span class="dimension-label vertical-label" id="verticalLabel">100cm</span>
-                    <span class="dimension-label horizontal-label" id="horizontalLabel">100cm</span>
+            
+            <label><input type="checkbox" id="extraLength"> Ik wil 1% gratis extra lengte</label>
+            
+            <div class="preview-container">
+                <h3>Voorbeeld:</h3>
+                <div class="preview">
+                    <div id="rectangle">
+                        <span class="dimension-label vertical-label" id="verticalLabel">100cm</span>
+                        <span class="dimension-label horizontal-label" id="horizontalLabel">100cm</span>
+                    </div>
                 </div>
             </div>
+            
+            <p class="price">Prijs: €<span id="price">31,95</span></p>
+            
+            <button onclick="updatePrice()">Prijs Berekenen</button>
         </div>
-        
-        <p class="price">Prijs: €<span id="price">31,95</span></p>
-        
-        <button onclick="updatePrice()">Prijs Berekenen</button>
+        <div class="image-section">
+            <img src="PLA2100.jpg" alt="Doorzichtig tafelzeil">
+        </div>
     </div>
     
     <script>

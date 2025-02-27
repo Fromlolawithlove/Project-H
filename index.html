@@ -6,20 +6,20 @@
     <title>Configurator - Doorzichtig Tafelzeil</title>
     <style>
         body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4; }
-        .container { max-width: 900px; margin: 50px auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); display: flex; }
+        .container { max-width: 900px; margin: 50px auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); display: flex; align-items: center; }
         .config-section { flex: 1; padding: 10px; }
         .image-section { flex: 1; display: flex; justify-content: center; align-items: center; }
         .image-section img { max-width: 100%; border-radius: 8px; }
         label { display: block; margin-top: 10px; font-weight: bold; }
-        input { width: 80px; padding: 5px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; text-align: center; }
+        input { width: 60px; padding: 5px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; text-align: center; font-size: 14px; }
         .preview-container { display: flex; flex-direction: column; align-items: center; }
         .preview { position: relative; margin-top: 20px; text-align: center; }
         .preview div { display: inline-block; background-color: rgba(0, 0, 255, 0.2); border: 1px solid #000080; position: relative; }
         .dimension-label { position: absolute; background-color: #000080; color: white; padding: 2px 5px; font-size: 12px; border-radius: 3px; }
         .vertical-label { left: -30px; top: 50%; transform: translateY(-50%); }
         .horizontal-label { top: 100%; left: 50%; transform: translateX(-50%); }
-        .price { font-size: 20px; font-weight: bold; margin-top: 10px; text-align: center; }
-        button { display: block; width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 15px; }
+        .price { font-size: 22px; font-weight: bold; margin-top: 10px; text-align: center; color: #000080; }
+        button { display: block; width: 100%; padding: 10px; background-color: #000080; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 15px; }
         button:hover { background-color: #000060; }
     </style>
 </head>
@@ -72,7 +72,7 @@
             let lengthM = length / 100;
             let extraLength = document.getElementById('extraLength').checked ? lengthM * 1.01 : lengthM;
             
-            let totalPrice = (widthM * lengthM * pricePerM2);
+            let totalPrice = (widthM * lengthM * pricePerM2); // 1% extra lengte wordt niet aangerekend
             document.getElementById('price').textContent = totalPrice.toFixed(2);
             
             let rect = document.getElementById('rectangle');

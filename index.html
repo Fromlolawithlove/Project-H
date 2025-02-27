@@ -8,9 +8,14 @@
         body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4; }
         .container { max-width: 600px; margin: 50px auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); }
         label { display: block; margin-top: 10px; font-weight: bold; }
-        input { width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; }
-        .preview { margin-top: 20px; text-align: center; }
-        .preview div { display: inline-block; background-color: rgba(0, 0, 255, 0.2); border: 1px solid blue; }
+        input { width: 80px; padding: 5px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; text-align: center; }
+        .config-section { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; }
+        .preview-container { display: flex; flex-direction: column; align-items: center; }
+        .preview { position: relative; margin-top: 20px; text-align: center; }
+        .preview div { display: inline-block; background-color: rgba(0, 0, 255, 0.2); border: 1px solid blue; position: relative; }
+        .dimension-label { position: absolute; background-color: #007bff; color: white; padding: 2px 5px; font-size: 12px; border-radius: 3px; }
+        .vertical-label { left: -30px; top: 50%; transform: translateY(-50%); }
+        .horizontal-label { top: 100%; left: 50%; transform: translateX(-50%); }
         .price { font-size: 20px; font-weight: bold; margin-top: 10px; text-align: center; }
         button { display: block; width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 15px; }
         button:hover { background-color: #0056b3; }
@@ -19,17 +24,26 @@
 <body>
     <div class="container">
         <h2>Configurator - Transparante Plastiek</h2>
-        <label for="width">Breedte (cm) - Max 140cm:</label>
-        <input type="number" id="width" min="10" max="140" value="100">
+        <div class="config-section">
+            <label for="width">Breedte (cm) - Max 140cm:</label>
+            <input type="number" id="width" min="10" max="140" value="100">
+        </div>
         
-        <label for="length">Lengte (cm) - Max 2000cm:</label>
-        <input type="number" id="length" min="10" max="2000" value="100">
+        <div class="config-section">
+            <label for="length">Lengte (cm) - Max 2000cm:</label>
+            <input type="number" id="length" min="10" max="2000" value="100">
+        </div>
         
         <label><input type="checkbox" id="extraLength"> Ik wil 1% gratis extra lengte</label>
         
-        <div class="preview">
+        <div class="preview-container">
             <h3>Voorbeeld:</h3>
-            <div id="rectangle" style="width: 100px; height: 100px;"></div>
+            <div class="preview">
+                <div id="rectangle">
+                    <span class="dimension-label vertical-label" id="verticalLabel">100cm</span>
+                    <span class="dimension-label horizontal-label" id="horizontalLabel">100cm</span>
+                </div>
+            </div>
         </div>
         
         <p class="price">Prijs: €<span id="price">31,95</span></p>
@@ -55,12 +69,15 @@
             let lengthM = length / 100;
             let extraLength = document.getElementById('extraLength').checked ? lengthM * 1.01 : lengthM;
             
-            let totalPrice = (widthM * lengthM * pricePerM2); // 1% extra lengte wordt niet aangerekend
+            let totalPrice = (widthM * lengthM * pricePerM2);
             document.getElementById('price').textContent = totalPrice.toFixed(2);
             
             let rect = document.getElementById('rectangle');
             rect.style.width = (widthM * 200) + 'px';
             rect.style.height = (lengthM * 50) + 'px';
+            
+            document.getElementById('verticalLabel').textContent = `${length}cm`;
+            document.getElementById('horizontalLabel').textContent = `${width}cm`;
         }
         
         updatePrice();

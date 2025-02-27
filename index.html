@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Tafelzeil Configurator</title>
+    <title>Doorzichtig Tafelzeil 2mm - Configurator</title>
     <style>
         /* Basisstijlen */
         body {
             font-family: 'Arial', sans-serif;
             margin: 0;
             padding: 20px;
-            background-color: #f0f4f8;
+            background-color: #f8fafc;
         }
 
         .container {
@@ -18,110 +18,202 @@
             margin: 40px auto;
             background: white;
             padding: 30px;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(0,0,0,0.08);
             display: flex;
             gap: 40px;
+        }
+
+        /* Header */
+        .product-header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+        .product-header h1 {
+            color: #1e293b;
+            font-size: 28px;
+            margin: 0;
+        }
+        .product-header .subtitle {
+            color: #64748b;
+            font-size: 16px;
+            margin-top: 5px;
         }
 
         /* Configuratiegedeelte */
         .config-section {
             flex: 1;
-            min-width: 300px;
+            min-width: 320px;
+            padding-right: 30px;
+        }
+
+        /* Input velden */
+        .input-group {
+            margin-bottom: 25px;
+        }
+        .input-group label {
+            display: block;
+            margin-bottom: 10px;
+            color: #334155;
+            font-weight: 600;
+            font-size: 15px;
+        }
+        .input-group input {
+            width: 100%;
+            max-width: 200px;
+            padding: 12px 15px;
+            border: 2px solid #cbd5e1;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s ease;
+        }
+        .input-group input:focus {
+            border-color: #3b82f6;
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+            outline: none;
         }
 
         /* Preview-gedeelte */
         .preview-container {
             position: relative;
-            margin: 25px 0;
-            padding: 20px;
+            margin: 30px 0;
+            padding: 25px;
             background: #f8fafc;
-            border-radius: 8px;
-            min-height: 300px; /* Vaste hoogte */
+            border-radius: 12px;
+            min-height: 280px;
+            border: 2px solid #e2e8f0;
         }
 
         #rectangle {
-            background-color: rgba(14, 165, 233, 0.15);
-            border: 2px solid #0ea5e9;
+            background-color: rgba(59, 130, 246, 0.1);
+            border: 2px solid #3b82f6;
             position: absolute;
             top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
-            transition: all 0.3s ease-in-out;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
         /* Meetlabels */
         .dimension-label {
             position: absolute;
-            background: #0ea5e9;
+            background: #3b82f6;
             color: white;
-            padding: 4px 8px;
-            border-radius: 4px;
-            font-size: 12px;
-            font-weight: bold;
-            z-index: 2;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
-
         .vertical-label {
-            left: -45px;
+            left: -50px;
             top: 50%;
             transform: translateY(-50%);
         }
-
         .horizontal-label {
-            bottom: -30px;
+            bottom: -40px;
             left: 50%;
             transform: translateX(-50%);
         }
 
-        /* Responsive aanpassingen */
+        /* Prijsweergave */
+        .price-display {
+            background: #3b82f6;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 25px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .price-display span {
+            font-size: 28px;
+            font-weight: 700;
+            display: block;
+            margin-top: 8px;
+        }
+
+        /* Bestelknop */
+        .order-btn {
+            width: 100%;
+            padding: 16px;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .order-btn:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        /* Afbeelding */
+        .image-section {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .image-section img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        }
+
+        /* Responsive design */
         @media (max-width: 768px) {
             .container {
                 flex-direction: column;
-                gap: 20px;
                 padding: 20px;
+                gap: 30px;
             }
-
-            .image-section img {
-                max-width: 80%;
-                margin: 0 auto;
+            .config-section {
+                padding-right: 0;
             }
-
+            .input-group input {
+                max-width: 100%;
+            }
             .preview-container {
                 min-height: 250px;
             }
-
-            input[type="number"] {
-                width: 100%;
+            .product-header h1 {
+                font-size: 24px;
             }
         }
-
-        /* Overige stijlen blijven hetzelfde */
-        /* ... */
     </style>
 </head>
 <body>
     <div class="container">
         <div class="config-section">
-            <!-- Input velden -->
-            <div class="input-group">
-                <label for="width">Breedte (10-140cm):</label>
-                <input type="number" id="width" min="10" max="140" value="100">
+            <div class="product-header">
+                <h1>Doorzichtig tafelzeil 2mm</h1>
+                <div class="subtitle">(max. 140cm breed)</div>
             </div>
 
             <div class="input-group">
-                <label for="length">Lengte (10-2000cm):</label>
-                <input type="number" id="length" min="10" max="2000" value="100">
+                <label>Breedte (cm)</label>
+                <input type="number" id="width" min="1" max="140" value="100">
             </div>
 
             <div class="input-group">
-                <label>
-                    <input type="checkbox" id="extraLength">
+                <label>Lengte (cm)</label>
+                <input type="number" id="length" min="1" max="2000" value="100">
+            </div>
+
+            <div class="input-group">
+                <label style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="extraLength" style="width: 20px; height: 20px;">
                     +1% gratis extra lengte
                 </label>
             </div>
 
-            <!-- Preview -->
             <div class="preview-container">
                 <div id="rectangle">
                     <span class="dimension-label vertical-label" id="widthLabel">100 cm</span>
@@ -129,30 +221,27 @@
                 </div>
             </div>
 
-            <!-- Prijs -->
             <div class="price-display">
-                Totaalprijs: <span id="price">€31,95</span>
+                Totaalprijs
+                <span id="price">€31,95</span>
             </div>
 
-            <!-- Bestelknop -->
-            <button class="order-btn">Bestel Nu</button>
+            <button class="order-btn">Direct bestellen</button>
         </div>
         
-        <!-- Afbeelding -->
         <div class="image-section">
-            <img src="PLA2100.jpg" alt="Tafelzeil voorbeeld" 
-                 style="max-width: 100%; height: auto; border-radius: 8px;">
+            <img src="PLA2100.jpg" alt="Doorzichtig tafelzeil 2mm dik" loading="lazy">
         </div>
     </div>
 
     <script>
-        // Configuratie
-        const MAX_WIDTH = 140;
-        const MAX_LENGTH = 2000;
-        const PRICE_PER_M2 = 31.95;
-        const PREVIEW_SIZE = 250; // Vaste preview grootte
+        const CONFIG = {
+            maxWidth: 140,
+            maxLength: 2000,
+            pricePerM2: 31.95,
+            previewArea: 280
+        };
 
-        // Elementen
         const elements = {
             width: document.getElementById('width'),
             length: document.getElementById('length'),
@@ -162,37 +251,22 @@
             lengthLabel: document.getElementById('lengthLabel')
         };
 
-        // Init
-        function init() {
-            setupEventListeners();
-            updatePreview();
-        }
-
-        // Event listeners
-        function setupEventListeners() {
-            [elements.width, elements.length].forEach(input => {
-                input.addEventListener('input', () => {
-                    input.value = Math.min(input.max, Math.max(input.min, input.value));
-                    updatePreview();
-                });
-            });
-
-            document.getElementById('extraLength').addEventListener('change', updatePreview);
-        }
-
-        // Update logica
-        function updatePreview() {
-            const width = parseFloat(elements.width.value);
-            const length = parseFloat(elements.length.value);
+        function calculateDimensions() {
+            const width = Math.min(CONFIG.maxWidth, Math.max(1, elements.width.value));
+            const length = Math.min(CONFIG.maxLength, Math.max(1, elements.length.value));
             const hasExtraLength = document.getElementById('extraLength').checked;
 
-            // Bereken schaalverhouding
+            // Update inputs
+            elements.width.value = width;
+            elements.length.value = length;
+
+            // Bereken schaal
             const scale = Math.min(
-                PREVIEW_SIZE / width,
-                PREVIEW_SIZE / length
+                CONFIG.previewArea / width,
+                CONFIG.previewArea / length
             );
 
-            // Update afmetingen
+            // Update visualisatie
             elements.rectangle.style.width = `${width * scale}px`;
             elements.rectangle.style.height = `${length * scale}px`;
 
@@ -204,12 +278,18 @@
 
             // Prijsberekening
             const actualLength = hasExtraLength ? length * 1.01 : length;
-            const price = (width/100 * actualLength/100 * PRICE_PER_M2).toFixed(2);
+            const price = (width/100 * actualLength/100 * CONFIG.pricePerM2).toFixed(2);
             elements.price.textContent = `€${price}`;
         }
 
-        // Start
-        init();
+        // Event listeners
+        [elements.width, elements.length].forEach(input => {
+            input.addEventListener('input', calculateDimensions);
+        });
+        document.getElementById('extraLength').addEventListener('change', calculateDimensions);
+
+        // Init
+        calculateDimensions();
     </script>
 </body>
 </html>

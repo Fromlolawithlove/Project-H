@@ -41,6 +41,8 @@
       min-width: 320px;
       padding-right: 30px;
     }
+
+    /* Input-groepen */
     .input-group {
       margin-bottom: 25px;
     }
@@ -51,18 +53,20 @@
       font-weight: 600;
       font-size: 15px;
     }
+
     /* Flexcontainer voor breedte en lengte */
     .dimensions-row {
       display: flex;
       gap: 20px;
       align-items: flex-start;
     }
-    /* Zorgt dat de breedte/lengte velden ook - en + knoppen hebben */
     .flex-row {
       display: flex;
       align-items: center;
       gap: 10px;
     }
+
+    /* Standaard inputstijl */
     .input-group input[type="number"] {
       width: 80px;
       padding: 12px 15px;
@@ -77,6 +81,8 @@
       box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
       outline: none;
     }
+
+    /* Min/plus-knoppen */
     .qty-btn {
       width: 40px;
       height: 40px;
@@ -92,15 +98,8 @@
       background: #3b82f6;
       color: white;
     }
-    /* Aantal-input aanpassen met afgeronde hoeken */
-    #quantity {
-      width: 70px;
-      text-align: center;
-      font-size: 18px;
-      padding: 8px;
-      border: 2px solid #cbd5e1;
-      border-radius: 8px;
-    }
+
+    /* Preview-container */
     .preview-container {
       position: relative;
       margin: 30px 0;
@@ -119,6 +118,8 @@
       transform: translate(-50%, -50%);
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
+
+    /* Labels in de preview */
     .dimension-label {
       position: absolute;
       background: #3b82f6;
@@ -129,41 +130,69 @@
       font-weight: 500;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
     }
-    /* Breedte-label onderaan (horizontaal) */
     .horizontal-label {
       bottom: -40px;
       left: 50%;
       transform: translateX(-50%);
     }
-    /* Lengte-label links (verticaal) */
     .vertical-label {
       left: -50px;
       top: 50%;
       transform: translateY(-50%);
     }
-    .price-display {
-      background: #3b82f6;
-      color: white;
-      padding: 20px;
-      border-radius: 10px;
-      text-align: center;
-      margin: 25px 0;
-      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-    }
-    .price-display span {
-      font-size: 28px;
-      font-weight: 700;
-      display: block;
-      margin-top: 8px;
-    }
-    .order-btn {
-      width: 100%;
+
+    /* Order-sectie: prijs, aantal, bestelknop */
+    .order-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      background: #f1f5f9;
+      border-radius: 8px;
       padding: 16px;
+      margin-top: 30px; /* ruimte boven de ordersectie */
+    }
+    /* Prijsblok in de order-sectie */
+    .price-block {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
+    .price-label {
+      font-size: 14px;
+      color: #1e293b;
+      font-weight: 600;
+    }
+    .price-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    /* Aantal stuks in de order-sectie */
+    .quantity-control {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    #quantity {
+      width: 70px;
+      text-align: center;
+      font-size: 18px;
+      padding: 8px;
+      border: 2px solid #cbd5e1;
+      border-radius: 8px;
+    }
+
+    /* Bestelknop */
+    .order-btn {
+      padding: 14px 24px;
       background: #10b981;
       color: white;
       border: none;
       border-radius: 8px;
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 600;
       cursor: pointer;
       transition: all 0.3s ease;
@@ -173,6 +202,8 @@
       background: #059669;
       transform: translateY(-2px);
     }
+
+    /* Afbeelding */
     .image-section {
       flex: 1;
       display: flex;
@@ -186,12 +217,8 @@
       border-radius: 12px;
       box-shadow: 0 8px 25px rgba(0,0,0,0.08);
     }
-    .quantity-control {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-      margin: 20px 0;
-    }
+
+    /* Responsive */
     @media (max-width: 768px) {
       .container {
         flex-direction: column;
@@ -210,9 +237,15 @@
       .product-header h1 {
         font-size: 24px;
       }
-      /* Zorgt ervoor dat breedte en lengte onder elkaar gaan bij kleine schermen */
       .dimensions-row {
         flex-direction: column;
+      }
+      .order-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .price-block {
+        margin-bottom: 10px;
       }
     }
   </style>
@@ -251,7 +284,7 @@
       <div class="input-group">
         <label style="display: flex; align-items: center; gap: 10px;">
           <input type="checkbox" id="extraLength" style="width: 20px; height: 20px;">
-          +1% gratis extra (toon in breedte & lengte, niet in prijs)
+          1% gratis extra (om de mogelijke krimp te compenseren.)
         </label>
       </div>
 
@@ -265,21 +298,22 @@
         </div>
       </div>
 
-      <!-- Prijs -->
-      <div class="price-display">
-        Totaalprijs
-        <span id="price">€31,95</span>
+      <!-- Bestel-sectie: prijs, aantal, bestelknop -->
+      <div class="order-row">
+        <!-- Prijsblok -->
+        <div class="price-block">
+          <span class="price-label">Totaalprijs</span>
+          <span class="price-value" id="price">€31,95</span>
+        </div>
+        <!-- Aantal stuks -->
+        <div class="quantity-control">
+          <button class="qty-btn" onclick="adjustQuantity(-1)">-</button>
+          <input type="number" id="quantity" value="1" min="1" max="99">
+          <button class="qty-btn" onclick="adjustQuantity(1)">+</button>
+        </div>
+        <!-- Bestelknop -->
+        <button class="order-btn">Direct bestellen</button>
       </div>
-
-      <!-- Aantal stuks -->
-      <div class="quantity-control">
-        <button class="qty-btn" onclick="adjustQuantity(-1)">-</button>
-        <input type="number" id="quantity" value="1" min="1" max="99">
-        <button class="qty-btn" onclick="adjustQuantity(1)">+</button>
-      </div>
-
-      <!-- Bestelknop -->
-      <button class="order-btn">Direct bestellen</button>
     </div>
     
     <div class="image-section">
@@ -320,7 +354,7 @@
       const displayW = hasExtra ? widthVal * 1.01 : widthVal;
       const displayL = hasExtra ? lengthVal * 1.01 : lengthVal;
 
-      // Bepaal schaal zodat de preview in de container past met behoud van de ratio
+      // Bepaal één schaalfactor, zodat de ratio klopt
       const scale = Math.min(
         CONFIG.previewWidth / displayW,
         CONFIG.previewHeight / displayL

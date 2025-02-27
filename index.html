@@ -5,18 +5,20 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Configurator Transparante Plastiek</title>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; }
-        .configurator { max-width: 500px; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
-        label { display: block; margin-top: 10px; }
-        input { width: 100%; padding: 8px; margin-top: 5px; }
+        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4; }
+        .container { max-width: 600px; margin: 50px auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); }
+        label { display: block; margin-top: 10px; font-weight: bold; }
+        input { width: 100%; padding: 8px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; }
         .preview { margin-top: 20px; text-align: center; }
-        .preview div { display: inline-block; background-color: rgba(0, 0, 255, 0.2); }
-        .price { font-size: 18px; font-weight: bold; margin-top: 10px; }
+        .preview div { display: inline-block; background-color: rgba(0, 0, 255, 0.2); border: 1px solid blue; }
+        .price { font-size: 20px; font-weight: bold; margin-top: 10px; text-align: center; }
+        button { display: block; width: 100%; padding: 10px; background-color: #007bff; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 15px; }
+        button:hover { background-color: #0056b3; }
     </style>
 </head>
 <body>
-    <h2>Configurator - Transparante Plastiek</h2>
-    <div class="configurator">
+    <div class="container">
+        <h2>Configurator - Transparante Plastiek</h2>
         <label for="width">Breedte (cm) - Max 140cm:</label>
         <input type="number" id="width" min="10" max="140" value="100">
         
@@ -31,6 +33,8 @@
         </div>
         
         <p class="price">Prijs: €<span id="price">31,95</span></p>
+        
+        <button onclick="updatePrice()">Prijs Berekenen</button>
     </div>
     
     <script>
@@ -38,16 +42,25 @@
         document.querySelectorAll('input').forEach(input => input.addEventListener('input', updatePrice));
         
         function updatePrice() {
-            let width = parseFloat(document.getElementById('width').value) / 100;
-            let length = parseFloat(document.getElementById('length').value) / 100;
-            let extraLength = document.getElementById('extraLength').checked ? length * 1.01 : length;
+            let widthInput = document.getElementById('width');
+            let lengthInput = document.getElementById('length');
             
-            let totalPrice = (width * extraLength * pricePerM2);
+            let width = parseFloat(widthInput.value);
+            let length = parseFloat(lengthInput.value);
+            
+            if (width > 140) { width = 140; widthInput.value = 140; }
+            if (length > 2000) { length = 2000; lengthInput.value = 2000; }
+            
+            let widthM = width / 100;
+            let lengthM = length / 100;
+            let extraLength = document.getElementById('extraLength').checked ? lengthM * 1.01 : lengthM;
+            
+            let totalPrice = (widthM * lengthM * pricePerM2); // 1% extra lengte wordt niet aangerekend
             document.getElementById('price').textContent = totalPrice.toFixed(2);
             
             let rect = document.getElementById('rectangle');
-            rect.style.width = (width * 200) + 'px';
-            rect.style.height = (length * 50) + 'px';
+            rect.style.width = (widthM * 200) + 'px';
+            rect.style.height = (lengthM * 50) + 'px';
         }
         
         updatePrice();

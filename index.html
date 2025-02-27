@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="nl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Configurator Transparante Plastiek</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .configurator { max-width: 500px; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
+        label { display: block; margin-top: 10px; }
+        input { width: 100%; padding: 8px; margin-top: 5px; }
+        .preview { margin-top: 20px; text-align: center; }
+        .preview div { display: inline-block; background-color: rgba(0, 0, 255, 0.2); }
+        .price { font-size: 18px; font-weight: bold; margin-top: 10px; }
+    </style>
+</head>
+<body>
+    <h2>Configurator - Transparante Plastiek</h2>
+    <div class="configurator">
+        <label for="width">Breedte (cm) - Max 140cm:</label>
+        <input type="number" id="width" min="10" max="140" value="100">
+        
+        <label for="length">Lengte (cm) - Max 2000cm:</label>
+        <input type="number" id="length" min="10" max="2000" value="100">
+        
+        <label><input type="checkbox" id="extraLength"> Ik wil 1% gratis extra lengte</label>
+        
+        <div class="preview">
+            <h3>Voorbeeld:</h3>
+            <div id="rectangle" style="width: 100px; height: 100px;"></div>
+        </div>
+        
+        <p class="price">Prijs: €<span id="price">31,95</span></p>
+    </div>
+    
+    <script>
+        const pricePerM2 = 31.95;
+        document.querySelectorAll('input').forEach(input => input.addEventListener('input', updatePrice));
+        
+        function updatePrice() {
+            let width = parseFloat(document.getElementById('width').value) / 100;
+            let length = parseFloat(document.getElementById('length').value) / 100;
+            let extraLength = document.getElementById('extraLength').checked ? length * 1.01 : length;
+            
+            let totalPrice = (width * extraLength * pricePerM2);
+            document.getElementById('price').textContent = totalPrice.toFixed(2);
+            
+            let rect = document.getElementById('rectangle');
+            rect.style.width = (width * 200) + 'px';
+            rect.style.height = (length * 50) + 'px';
+        }
+        
+        updatePrice();
+    </script>
+</body>
+</html>

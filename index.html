@@ -55,19 +55,43 @@
             font-weight: 600;
             font-size: 15px;
         }
-        .input-group input {
-            width: 100%;
-            max-width: 200px;
+
+        /* Zorgt dat de breedte/lengte velden ook - en + knoppen hebben */
+        .flex-row {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .input-group input[type="number"] {
+            width: 80px;
             padding: 12px 15px;
             border: 2px solid #cbd5e1;
             border-radius: 8px;
             font-size: 16px;
             transition: all 0.3s ease;
+            text-align: center;
         }
-        .input-group input:focus {
+        .input-group input[type="number"]:focus {
             border-color: #3b82f6;
             box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
             outline: none;
+        }
+
+        .qty-btn {
+            width: 40px;
+            height: 40px;
+            border: 2px solid #3b82f6;
+            background: white;
+            color: #3b82f6;
+            border-radius: 8px;
+            font-size: 20px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .qty-btn:hover {
+            background: #3b82f6;
+            color: white;
         }
 
         .preview-container {
@@ -165,21 +189,6 @@
             gap: 10px;
             margin: 20px 0;
         }
-        .qty-btn {
-            width: 40px;
-            height: 40px;
-            border: 2px solid #3b82f6;
-            background: white;
-            color: #3b82f6;
-            border-radius: 8px;
-            font-size: 20px;
-            cursor: pointer;
-            transition: all 0.2s;
-        }
-        .qty-btn:hover {
-            background: #3b82f6;
-            color: white;
-        }
         #quantity {
             width: 70px;
             text-align: center;
@@ -216,23 +225,35 @@
                 <div class="subtitle">(max. 140cm breed)</div>
             </div>
 
+            <!-- Breedte -->
             <div class="input-group">
-                <label>Breedte (cm)</label>
-                <input type="number" id="width" min="1" max="140" value="100">
+                <label for="width">Breedte (cm)</label>
+                <div class="flex-row">
+                    <button class="qty-btn" onclick="adjustWidth(-1)">-</button>
+                    <input type="number" id="width" min="1" max="140" value="100">
+                    <button class="qty-btn" onclick="adjustWidth(1)">+</button>
+                </div>
             </div>
 
+            <!-- Lengte -->
             <div class="input-group">
-                <label>Lengte (cm)</label>
-                <input type="number" id="length" min="1" max="2000" value="100">
+                <label for="length">Lengte (cm)</label>
+                <div class="flex-row">
+                    <button class="qty-btn" onclick="adjustLength(-1)">-</button>
+                    <input type="number" id="length" min="1" max="2000" value="100">
+                    <button class="qty-btn" onclick="adjustLength(1)">+</button>
+                </div>
             </div>
 
+            <!-- Extra lengte checkbox -->
             <div class="input-group">
                 <label style="display: flex; align-items: center; gap: 10px;">
                     <input type="checkbox" id="extraLength" style="width: 20px; height: 20px;">
-                    +1% gratis extra lengte
+                    +1% gratis extra (toon in breedte & lengte, niet in prijs)
                 </label>
             </div>
 
+            <!-- Preview -->
             <div class="preview-container">
                 <div id="rectangle">
                     <span class="dimension-label vertical-label" id="widthLabel">100 cm</span>
@@ -240,17 +261,20 @@
                 </div>
             </div>
 
+            <!-- Prijs -->
             <div class="price-display">
                 Totaalprijs
                 <span id="price">€31,95</span>
             </div>
 
+            <!-- Aantal stuks -->
             <div class="quantity-control">
                 <button class="qty-btn" onclick="adjustQuantity(-1)">-</button>
                 <input type="number" id="quantity" value="1" min="1" max="99">
                 <button class="qty-btn" onclick="adjustQuantity(1)">+</button>
             </div>
 
+            <!-- Bestelknop -->
             <button class="order-btn">Direct bestellen</button>
         </div>
         
@@ -264,8 +288,9 @@
             maxWidth: 140,
             maxLength: 2000,
             pricePerM2: 31.95,
-            previewWidth: 250,  // Vaste breedte preview-container
-            previewHeight: 200  // Vaste hoogte preview-container
+            // Afmetingen preview (in px) - pas deze aan naar wens
+            previewWidth: 250,
+            previewHeight: 200
         };
 
         const elements = {
@@ -277,55 +302,77 @@
             lengthLabel: document.getElementById('lengthLabel')
         };
 
+        // Berekent alles opnieuw bij wijzigingen
         function calculateDimensions() {
-            // Correcte waardes afdwingen
-            const width = Math.min(CONFIG.maxWidth, Math.max(1, elements.width.value));
-            const length = Math.min(CONFIG.maxLength, Math.max(1, elements.length.value));
+            // Corrigeer invoer binnen de limieten
+            let widthVal = Math.min(CONFIG.maxWidth, Math.max(1, parseInt(elements.width.value)));
+            let lengthVal = Math.min(CONFIG.maxLength, Math.max(1, parseInt(elements.length.value)));
             const hasExtraLength = document.getElementById('extraLength').checked;
-            const quantity = document.getElementById('quantity').value;
+            const quantity = parseInt(document.getElementById('quantity').value) || 1;
 
-            // Update inputs
-            elements.width.value = width;
-            elements.length.value = length;
+            // Update de input-velden als ze buiten de limiet zijn
+            elements.width.value = widthVal;
+            elements.length.value = lengthVal;
 
-            // SCHAALCORRECTIE - Belangrijkste aanpassing!
+            // Voor de preview en labels willen we +1% tonen
+            const displayWidth = hasExtraLength ? widthVal * 1.01 : widthVal;
+            const displayLength = hasExtraLength ? lengthVal * 1.01 : lengthVal;
+
+            // Schaal berekenen op basis van de maximale breedte/hoogte
             const widthScale = CONFIG.previewWidth / CONFIG.maxWidth;
             const lengthScale = CONFIG.previewHeight / CONFIG.maxLength;
-            
-            const displayWidth = width * widthScale;
-            const displayLength = length * lengthScale;
 
-            elements.rectangle.style.width = `${displayWidth}px`;
-            elements.rectangle.style.height = `${displayLength}px`;
+            // Afmetingen in de preview
+            elements.rectangle.style.width = `${displayWidth * widthScale}px`;
+            elements.rectangle.style.height = `${displayLength * lengthScale}px`;
 
-            // Update labels
-            elements.widthLabel.textContent = `${width} cm`;
-            elements.lengthLabel.textContent = `${hasExtraLength ? 
-                `${Math.round(length * 1.01)} cm` : 
-                `${length} cm`}`;
+            // Labels tonen met of zonder +1%
+            elements.widthLabel.textContent = `${Math.round(displayWidth)} cm`;
+            elements.lengthLabel.textContent = `${Math.round(displayLength)} cm`;
 
-            // Prijsberekening
-            const actualLength = hasExtraLength ? length * 1.01 : length;
-            const price = (width/100 * actualLength/100 * CONFIG.pricePerM2 * quantity).toFixed(2);
+            // Prijsberekening (zonder de +1% extra)
+            // Let op: breedte en lengte zijn in cm, dus omzetten naar meter: /100
+            const price = ((widthVal / 100) * (lengthVal / 100) * CONFIG.pricePerM2 * quantity).toFixed(2);
             elements.price.textContent = `€${price}`;
         }
 
+        // Knoppen voor breedte
+        function adjustWidth(change) {
+            const input = elements.width;
+            let newVal = parseInt(input.value) + change;
+            if (newVal < 1) newVal = 1;
+            if (newVal > CONFIG.maxWidth) newVal = CONFIG.maxWidth;
+            input.value = newVal;
+            calculateDimensions();
+        }
+
+        // Knoppen voor lengte
+        function adjustLength(change) {
+            const input = elements.length;
+            let newVal = parseInt(input.value) + change;
+            if (newVal < 1) newVal = 1;
+            if (newVal > CONFIG.maxLength) newVal = CONFIG.maxLength;
+            input.value = newVal;
+            calculateDimensions();
+        }
+
+        // Knoppen voor aantal stuks
         function adjustQuantity(change) {
             const input = document.getElementById('quantity');
             let newVal = parseInt(input.value) + change;
-            if(newVal < 1) newVal = 1;
+            if (newVal < 1) newVal = 1;
+            if (newVal > 99) newVal = 99;
             input.value = newVal;
             calculateDimensions();
         }
 
         // Event listeners
-        [elements.width, elements.length].forEach(input => {
-            input.addEventListener('input', calculateDimensions);
-        });
+        elements.width.addEventListener('input', calculateDimensions);
+        elements.length.addEventListener('input', calculateDimensions);
         document.getElementById('extraLength').addEventListener('change', calculateDimensions);
         document.getElementById('quantity').addEventListener('input', calculateDimensions);
 
-        // Init
+        // Init bij eerste laden
         calculateDimensions();
     </script>
 </body>

@@ -124,15 +124,17 @@
             font-weight: 500;
             box-shadow: 0 2px 8px rgba(0,0,0,0.1);
         }
-        .vertical-label {
-            left: -50px;
-            top: 50%;
-            transform: translateY(-50%);
-        }
+        /* De breedte-label onderaan (horizontaal) */
         .horizontal-label {
             bottom: -40px;
             left: 50%;
             transform: translateX(-50%);
+        }
+        /* De lengte-label links (verticaal) */
+        .vertical-label {
+            left: -50px;
+            top: 50%;
+            transform: translateY(-50%);
         }
 
         .price-display {
@@ -256,8 +258,10 @@
             <!-- Preview -->
             <div class="preview-container">
                 <div id="rectangle">
-                    <span class="dimension-label vertical-label" id="widthLabel">100 cm</span>
-                    <span class="dimension-label horizontal-label" id="lengthLabel">100 cm</span>
+                    <!-- Breedte-label onderaan (horizontaal) -->
+                    <span class="dimension-label horizontal-label" id="widthLabel">100 cm</span>
+                    <!-- Lengte-label links (verticaal) -->
+                    <span class="dimension-label vertical-label" id="lengthLabel">100 cm</span>
                 </div>
             </div>
 

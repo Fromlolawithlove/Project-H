@@ -14,12 +14,47 @@
         input { width: 60px; padding: 5px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; text-align: center; font-size: 14px; }
         .preview-container { display: flex; flex-direction: column; align-items: center; }
         .preview { position: relative; margin-top: 20px; text-align: center; }
-        .preview div { display: inline-block; background-color: rgba(0, 0, 255, 0.2); border: 1px solid #000080; position: relative; }
-        .dimension-label { position: absolute; background-color: #000080; color: white; padding: 2px 5px; font-size: 12px; border-radius: 3px; }
-        .vertical-label { left: -30px; top: 50%; transform: translateY(-50%); }
-        .horizontal-label { top: 100%; left: 50%; transform: translateX(-50%); }
+        .preview div { 
+            display: inline-block; 
+            background-color: rgba(0, 0, 255, 0.2); 
+            border: 1px solid #000080; 
+            position: relative; 
+            width: 200px;   /* Startgrootte 100cm */
+            height: 200px;  /* Startgrootte 100cm */
+        }
+        .dimension-label { 
+            position: absolute; 
+            background-color: #000080; 
+            color: white; 
+            padding: 2px 5px; 
+            font-size: 12px; 
+            border-radius: 3px; 
+        }
+        .vertical-label { 
+            left: -35px; 
+            top: 50%; 
+            transform: translateY(-50%); 
+            white-space: nowrap; 
+        }
+        .horizontal-label { 
+            top: calc(100% + 5px); 
+            left: 50%; 
+            transform: translateX(-50%); 
+            white-space: nowrap; 
+        }
         .price { font-size: 22px; font-weight: bold; margin-top: 10px; text-align: center; color: #000080; }
-        button { display: block; width: 100%; padding: 10px; background-color: #000080; color: white; border: none; border-radius: 5px; cursor: pointer; font-size: 16px; margin-top: 15px; }
+        button { 
+            display: block; 
+            width: 100%; 
+            padding: 10px; 
+            background-color: #000080; 
+            color: white; 
+            border: none; 
+            border-radius: 5px; 
+            cursor: pointer; 
+            font-size: 16px; 
+            margin-top: 15px; 
+        }
         button:hover { background-color: #000060; }
     </style>
 </head>
@@ -56,6 +91,7 @@
     
     <script>
         const pricePerM2 = 31.95;
+        const scaleFactor = 2; // 1cm = 2 pixels
         document.querySelectorAll('input').forEach(input => input.addEventListener('input', updatePrice));
         
         function updatePrice() {
@@ -65,24 +101,29 @@
             let width = parseFloat(widthInput.value);
             let length = parseFloat(lengthInput.value);
             
+            // Controleer maxima
             if (width > 140) { width = 140; widthInput.value = 140; }
             if (length > 2000) { length = 2000; lengthInput.value = 2000; }
             
+            // Bereken prijs
             let widthM = width / 100;
             let lengthM = length / 100;
-            let extraLength = document.getElementById('extraLength').checked ? lengthM * 1.01 : lengthM;
+            let extraLength = document.getElementById('extraLength").checked ? lengthM * 1.01 : lengthM;
             
-            let totalPrice = (widthM * lengthM * pricePerM2); // 1% extra lengte wordt niet aangerekend
+            let totalPrice = (widthM * extraLength * pricePerM2);
             document.getElementById('price').textContent = totalPrice.toFixed(2);
             
+            // Update preview
             let rect = document.getElementById('rectangle');
-            rect.style.width = (widthM * 200) + 'px';
-            rect.style.height = (lengthM * 50) + 'px';
+            rect.style.width = (width * scaleFactor) + 'px';
+            rect.style.height = (length * scaleFactor) + 'px';
             
+            // Update labels
             document.getElementById('verticalLabel').textContent = `${length}cm`;
             document.getElementById('horizontalLabel').textContent = `${width}cm`;
         }
         
+        // Initialiseer bij het laden
         updatePrice();
     </script>
 </body>

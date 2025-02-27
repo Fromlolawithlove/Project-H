@@ -3,142 +3,248 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configurator - Doorzichtig Tafelzeil</title>
+    <title>Tafelzeil Configurator</title>
     <style>
-        body { font-family: Arial, sans-serif; padding: 20px; background-color: #f4f4f4; }
-        .container { max-width: 900px; margin: 50px auto; background: white; padding: 20px; border-radius: 8px; box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1); display: flex; align-items: center; }
-        .config-section { flex: 1; padding: 10px; }
-        .image-section { flex: 1; display: flex; justify-content: center; align-items: center; }
-        .image-section img { max-width: 100%; border-radius: 8px; }
-        label { display: block; margin-top: 10px; font-weight: bold; }
-        input { width: 60px; padding: 5px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; text-align: center; font-size: 14px; }
-        .preview-container { display: flex; flex-direction: column; align-items: center; }
-        .preview { position: relative; margin: 20px 0 40px 0; text-align: center; }
-        .preview div { 
-            display: inline-block; 
-            background-color: rgba(0, 0, 255, 0.2); 
-            border: 1px solid #000080; 
-            position: relative; 
-            width: 200px;
-            height: 200px;
-            transition: all 0.3s ease; /* Soepele animatie */
+        /* Basisstijlen */
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f0f4f8;
         }
-        .dimension-label { 
-            position: absolute; 
-            background-color: #000080; 
-            color: white; 
-            padding: 2px 5px; 
-            font-size: 12px; 
-            border-radius: 3px; 
-            pointer-events: none; 
+
+        .container {
+            max-width: 1200px;
+            margin: 40px auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+            display: flex;
+            gap: 40px;
         }
-        .vertical-label { 
-            left: -35px; 
-            top: 50%; 
-            transform: translateY(-50%); 
-            white-space: nowrap; 
+
+        /* Configuratiegedeelte */
+        .config-section {
+            flex: 1;
+            padding-right: 30px;
+            border-right: 2px solid #e0e7ff;
         }
-        .horizontal-label { 
-            top: calc(100% + 5px); 
-            left: 50%; 
-            transform: translateX(-50%); 
-            white-space: nowrap; 
-        }
-        .price { 
-            font-size: 22px; 
-            font-weight: bold; 
-            margin: 30px 0 15px 0; 
-            color: #000080; 
+
+        /* Preview-gedeelte */
+        .preview-container {
             position: relative;
-            z-index: 1;
+            margin: 25px 0;
+            padding: 20px;
+            background: #f8fafc;
+            border-radius: 8px;
         }
-        button { 
-            display: block; 
-            width: 100%; 
-            padding: 10px; 
-            color: white; 
-            border: none; 
-            border-radius: 5px; 
-            cursor: pointer; 
-            font-size: 16px; 
-            margin-top: 10px; 
-            transition: opacity 0.3s;
+
+        #rectangle {
+            background-color: rgba(14, 165, 233, 0.15);
+            border: 2px solid #0ea5e9;
+            position: relative;
+            transition: all 0.3s ease-in-out;
         }
-        button[onclick="updatePrice()"] { 
-            background-color: #000080; 
+
+        /* Meetlabels */
+        .dimension-label {
+            position: absolute;
+            background: #0ea5e9;
+            color: white;
+            padding: 4px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+            font-weight: bold;
         }
-        .bestel-knop { 
-            background-color: #4CAF50; 
-            opacity: 0.7; 
+
+        .vertical-label {
+            left: -45px;
+            top: 50%;
+            transform: translateY(-50%);
+            white-space: nowrap;
         }
-        button:hover { opacity: 0.9; }
+
+        .horizontal-label {
+            bottom: -30px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        /* Input velden */
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #1e293b;
+            font-weight: 600;
+        }
+
+        input[type="number"] {
+            width: 120px;
+            padding: 8px 12px;
+            border: 2px solid #cbd5e1;
+            border-radius: 6px;
+            font-size: 16px;
+        }
+
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #0ea5e9;
+            box-shadow: 0 0 0 3px rgba(14, 165, 233, 0.2);
+        }
+
+        /* Prijsweergave */
+        .price-display {
+            margin-top: 30px;
+            font-size: 24px;
+            color: #1e293b;
+            padding: 15px;
+            background: #f1f5f9;
+            border-radius: 8px;
+            text-align: center;
+        }
+
+        /* Knoppen */
+        .button-group {
+            margin-top: 30px;
+            display: flex;
+            gap: 15px;
+        }
+
+        button {
+            flex: 1;
+            padding: 12px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.2s;
+        }
+
+        .calculate-btn {
+            background: #0ea5e9;
+            color: white;
+        }
+
+        .order-btn {
+            background: #10b981;
+            color: white;
+            opacity: 0.7;
+        }
+
+        button:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+        }
     </style>
 </head>
 <body>
     <div class="container">
         <div class="config-section">
-            <h2>Configurator - Doorzichtig Tafelzeil</h2>
-            <label for="width">Breedte (cm) - Max 140cm:</label>
-            <input type="number" id="width" min="10" max="140" value="100">
+            <h1>Tafelzeil Configurator</h1>
             
-            <label for="length">Lengte (cm) - Max 2000cm:</label>
-            <input type="number" id="length" min="10" max="2000" value="100">
-            
-            <label><input type="checkbox" id="extraLength"> Ik wil 1% gratis extra lengte</label>
-            
+            <div class="input-group">
+                <label for="width">Breedte (cm):</label>
+                <input type="number" id="width" min="10" max="140" value="100">
+            </div>
+
+            <div class="input-group">
+                <label for="length">Lengte (cm):</label>
+                <input type="number" id="length" min="10" max="2000" value="100">
+            </div>
+
+            <div class="input-group">
+                <label>
+                    <input type="checkbox" id="extraLength">
+                    +1% gratis extra lengte
+                </label>
+            </div>
+
             <div class="preview-container">
                 <h3>Voorbeeld:</h3>
-                <div class="preview">
-                    <div id="rectangle">
-                        <span class="dimension-label vertical-label" id="verticalLabel">100cm</span>
-                        <span class="dimension-label horizontal-label" id="horizontalLabel">100cm</span>
-                    </div>
+                <div id="rectangle">
+                    <span class="dimension-label vertical-label" id="widthLabel">100 cm</span>
+                    <span class="dimension-label horizontal-label" id="lengthLabel">100 cm</span>
                 </div>
             </div>
-            
-            <p class="price">Prijs: €<span id="price">31,95</span></p>
-            
-            <button onclick="updatePrice()">Prijs Berekenen</button>
-            <button class="bestel-knop" onclick="bestelNu()">Bestel nu (nog niet werkend)</button>
+
+            <div class="price-display">
+                Totaalprijs: <span id="price">€31,95</span>
+            </div>
+
+            <div class="button-group">
+                <button class="calculate-btn" onclick="updateDimensions()">Update Maten</button>
+                <button class="order-btn">Bestel Nu</button>
+            </div>
         </div>
+        
         <div class="image-section">
-            <img src="PLA2100.jpg" alt="Doorzichtig tafelzeil">
+            <img src="tafelzeil.jpg" alt="Voorbeeld tafelzeil" style="max-width: 100%; border-radius: 8px;">
         </div>
     </div>
-    
+
     <script>
-        const pricePerM2 = 31.95;
-        const scaleFactor = 2;
-        
-        document.querySelectorAll('input').forEach(input => input.addEventListener('input', updatePrice));
-        
-        function updatePrice() {
-            const width = Math.min(140, parseFloat(document.getElementById('width').value || 100);
-            const length = Math.min(2000, parseFloat(document.getElementById('length').value || 100));
-            
-            document.getElementById('width').value = width;
-            document.getElementById('length').value = length;
-            
-            const widthM = width / 100;
-            const lengthM = length / 100;
-            const extraLength = document.getElementById('extraLength').checked ? lengthM * 1.01 : lengthM;
-            
-            const totalPrice = (widthM * extraLength * pricePerM2);
-            document.getElementById('price').textContent = totalPrice.toFixed(2);
-            
-            const rect = document.getElementById('rectangle');
-            rect.style.width = `${width * scaleFactor}px`;
-            rect.style.height = `${length * scaleFactor}px`;
-            
-            document.getElementById('verticalLabel').textContent = `${length}cm`;
-            document.getElementById('horizontalLabel').textContent = `${width}cm`;
+        // Configuratie-instellingen
+        const MAX_WIDTH = 140;
+        const MAX_LENGTH = 2000;
+        const PRICE_PER_M2 = 31.95;
+        const SCALE_FACTOR = 2; // 1cm = 2 pixels
+
+        // Element referenties
+        const widthInput = document.getElementById('width');
+        const lengthInput = document.getElementById('length');
+        const rectangle = document.getElementById('rectangle');
+        const priceDisplay = document.getElementById('price');
+
+        // Initialisatie
+        function init() {
+            updateDimensions();
+            setupEventListeners();
         }
-        
-        function bestelNu() {
-            alert('De bestelfunctie is momenteel nog niet beschikbaar.');
+
+        // Event listeners
+        function setupEventListeners() {
+            widthInput.addEventListener('input', () => {
+                widthInput.value = Math.min(MAX_WIDTH, Math.max(10, widthInput.value));
+                updateDimensions();
+            });
+
+            lengthInput.addEventListener('input', () => {
+                lengthInput.value = Math.min(MAX_LENGTH, Math.max(10, lengthInput.value));
+                updateDimensions();
+            });
+
+            document.getElementById('extraLength').addEventListener('change', updateDimensions);
         }
-        
-        updatePrice();
+
+        // Hoofdfunctie voor updates
+        function updateDimensions() {
+            const width = parseFloat(widthInput.value);
+            const length = parseFloat(lengthInput.value);
+            const hasExtraLength = document.getElementById('extraLength').checked;
+
+            // Update visuele weergave
+            rectangle.style.width = `${width * SCALE_FACTOR}px`;
+            rectangle.style.height = `${length * SCALE_FACTOR}px`;
+            
+            // Update labels
+            document.getElementById('widthLabel').textContent = `${width} cm`;
+            document.getElementById('lengthLabel').textContent = `${hasExtraLength 
+                ? `${length} cm (+1%)`
+                : `${length} cm`}`;
+
+            // Prijsberekening
+            const actualLength = hasExtraLength ? length * 1.01 : length;
+            const price = (width/100 * actualLength/100 * PRICE_PER_M2).toFixed(2);
+            priceDisplay.textContent = `€${price}`;
+        }
+
+        // Start de configurator
+        init();
     </script>
 </body>
 </html>

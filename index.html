@@ -13,14 +13,15 @@
         label { display: block; margin-top: 10px; font-weight: bold; }
         input { width: 60px; padding: 5px; margin-top: 5px; border: 1px solid #ccc; border-radius: 4px; text-align: center; font-size: 14px; }
         .preview-container { display: flex; flex-direction: column; align-items: center; }
-        .preview { position: relative; margin-top: 20px; text-align: center; }
+        .preview { position: relative; margin: 20px 0 40px 0; text-align: center; }
         .preview div { 
             display: inline-block; 
             background-color: rgba(0, 0, 255, 0.2); 
             border: 1px solid #000080; 
             position: relative; 
-            width: 200px;   /* Startgrootte 100cm */
-            height: 200px;  /* Startgrootte 100cm */
+            width: 200px;
+            height: 200px;
+            transition: all 0.3s ease; /* Soepele animatie */
         }
         .dimension-label { 
             position: absolute; 
@@ -29,6 +30,7 @@
             padding: 2px 5px; 
             font-size: 12px; 
             border-radius: 3px; 
+            pointer-events: none; 
         }
         .vertical-label { 
             left: -35px; 
@@ -42,20 +44,34 @@
             transform: translateX(-50%); 
             white-space: nowrap; 
         }
-        .price { font-size: 22px; font-weight: bold; margin-top: 10px; text-align: center; color: #000080; }
+        .price { 
+            font-size: 22px; 
+            font-weight: bold; 
+            margin: 30px 0 15px 0; 
+            color: #000080; 
+            position: relative;
+            z-index: 1;
+        }
         button { 
             display: block; 
             width: 100%; 
             padding: 10px; 
-            background-color: #000080; 
             color: white; 
             border: none; 
             border-radius: 5px; 
             cursor: pointer; 
             font-size: 16px; 
-            margin-top: 15px; 
+            margin-top: 10px; 
+            transition: opacity 0.3s;
         }
-        button:hover { background-color: #000060; }
+        button[onclick="updatePrice()"] { 
+            background-color: #000080; 
+        }
+        .bestel-knop { 
+            background-color: #4CAF50; 
+            opacity: 0.7; 
+        }
+        button:hover { opacity: 0.9; }
     </style>
 </head>
 <body>
@@ -83,6 +99,7 @@
             <p class="price">Prijs: €<span id="price">31,95</span></p>
             
             <button onclick="updatePrice()">Prijs Berekenen</button>
+            <button class="bestel-knop" onclick="bestelNu()">Bestel nu (nog niet werkend)</button>
         </div>
         <div class="image-section">
             <img src="PLA2100.jpg" alt="Doorzichtig tafelzeil">
@@ -91,39 +108,36 @@
     
     <script>
         const pricePerM2 = 31.95;
-        const scaleFactor = 2; // 1cm = 2 pixels
+        const scaleFactor = 2;
+        
         document.querySelectorAll('input').forEach(input => input.addEventListener('input', updatePrice));
         
         function updatePrice() {
-            let widthInput = document.getElementById('width');
-            let lengthInput = document.getElementById('length');
+            const width = Math.min(140, parseFloat(document.getElementById('width').value || 100);
+            const length = Math.min(2000, parseFloat(document.getElementById('length').value || 100));
             
-            let width = parseFloat(widthInput.value);
-            let length = parseFloat(lengthInput.value);
+            document.getElementById('width').value = width;
+            document.getElementById('length').value = length;
             
-            // Controleer maxima
-            if (width > 140) { width = 140; widthInput.value = 140; }
-            if (length > 2000) { length = 2000; lengthInput.value = 2000; }
+            const widthM = width / 100;
+            const lengthM = length / 100;
+            const extraLength = document.getElementById('extraLength').checked ? lengthM * 1.01 : lengthM;
             
-            // Bereken prijs
-            let widthM = width / 100;
-            let lengthM = length / 100;
-            let extraLength = document.getElementById('extraLength").checked ? lengthM * 1.01 : lengthM;
-            
-            let totalPrice = (widthM * extraLength * pricePerM2);
+            const totalPrice = (widthM * extraLength * pricePerM2);
             document.getElementById('price').textContent = totalPrice.toFixed(2);
             
-            // Update preview
-            let rect = document.getElementById('rectangle');
-            rect.style.width = (width * scaleFactor) + 'px';
-            rect.style.height = (length * scaleFactor) + 'px';
+            const rect = document.getElementById('rectangle');
+            rect.style.width = `${width * scaleFactor}px`;
+            rect.style.height = `${length * scaleFactor}px`;
             
-            // Update labels
             document.getElementById('verticalLabel').textContent = `${length}cm`;
             document.getElementById('horizontalLabel').textContent = `${width}cm`;
         }
         
-        // Initialiseer bij het laden
+        function bestelNu() {
+            alert('De bestelfunctie is momenteel nog niet beschikbaar.');
+        }
+        
         updatePrice();
     </script>
 </body>

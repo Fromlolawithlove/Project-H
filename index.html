@@ -24,7 +24,6 @@
             gap: 40px;
         }
 
-        /* Header */
         .product-header {
             text-align: center;
             margin-bottom: 30px;
@@ -40,14 +39,12 @@
             margin-top: 5px;
         }
 
-        /* Configuratiegedeelte */
         .config-section {
             flex: 1;
             min-width: 320px;
             padding-right: 30px;
         }
 
-        /* Input velden */
         .input-group {
             margin-bottom: 25px;
         }
@@ -73,7 +70,6 @@
             outline: none;
         }
 
-        /* Preview-gedeelte */
         .preview-container {
             position: relative;
             margin: 30px 0;
@@ -82,7 +78,6 @@
             border-radius: 12px;
             min-height: 280px;
             border: 2px solid #e2e8f0;
-            aspect-ratio: 1.4;
         }
 
         #rectangle {
@@ -95,12 +90,80 @@
             transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
         }
 
-        /* Nieuwe hoeveelheidscontrols */
+        .dimension-label {
+            position: absolute;
+            background: #3b82f6;
+            color: white;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 13px;
+            font-weight: 500;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+        .vertical-label {
+            left: -50px;
+            top: 50%;
+            transform: translateY(-50%);
+        }
+        .horizontal-label {
+            bottom: -40px;
+            left: 50%;
+            transform: translateX(-50%);
+        }
+
+        .price-display {
+            background: #3b82f6;
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: center;
+            margin: 25px 0;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .price-display span {
+            font-size: 28px;
+            font-weight: 700;
+            display: block;
+            margin-top: 8px;
+        }
+
+        .order-btn {
+            width: 100%;
+            padding: 16px;
+            background: #10b981;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 18px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+        .order-btn:hover {
+            background: #059669;
+            transform: translateY(-2px);
+        }
+
+        .image-section {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+        .image-section img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 12px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+        }
+
         .quantity-control {
             display: flex;
             align-items: center;
             gap: 10px;
-            margin-top: 20px;
+            margin: 20px 0;
         }
         .qty-btn {
             width: 40px;
@@ -121,42 +184,27 @@
             width: 70px;
             text-align: center;
             font-size: 18px;
+            padding: 8px;
         }
 
-        /* Prijsweergave */
-        .price-display {
-            background: #3b82f6;
-            color: white;
-            padding: 20px;
-            border-radius: 10px;
-            text-align: center;
-            margin: 25px 0;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
-        .price-display span {
-            font-size: 28px;
-            font-weight: 700;
-            display: block;
-            margin-top: 8px;
-        }
-
-        /* Bestelknop */
-        .order-btn {
-            width: 100%;
-            padding: 16px;
-            background: #10b981;
-            color: white;
-            border: none;
-            border-radius: 8px;
-            font-size: 18px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
-        }
-        .order-btn:hover {
-            background: #059669;
-            transform: translateY(-2px);
+        @media (max-width: 768px) {
+            .container {
+                flex-direction: column;
+                padding: 20px;
+                gap: 30px;
+            }
+            .config-section {
+                padding-right: 0;
+            }
+            .input-group input {
+                max-width: 100%;
+            }
+            .preview-container {
+                min-height: 250px;
+            }
+            .product-header h1 {
+                font-size: 24px;
+            }
         }
     </style>
 </head>
@@ -178,10 +226,18 @@
                 <input type="number" id="length" min="1" max="2000" value="100">
             </div>
 
-            <div class="quantity-control">
-                <button class="qty-btn" onclick="adjustQuantity(-1)">-</button>
-                <input type="number" id="quantity" value="1" min="1" max="99">
-                <button class="qty-btn" onclick="adjustQuantity(1)">+</button>
+            <div class="input-group">
+                <label style="display: flex; align-items: center; gap: 10px;">
+                    <input type="checkbox" id="extraLength" style="width: 20px; height: 20px;">
+                    +1% gratis extra lengte
+                </label>
+            </div>
+
+            <div class="preview-container">
+                <div id="rectangle">
+                    <span class="dimension-label vertical-label" id="widthLabel">100 cm</span>
+                    <span class="dimension-label horizontal-label" id="lengthLabel">100 cm</span>
+                </div>
             </div>
 
             <div class="price-display">
@@ -189,11 +245,71 @@
                 <span id="price">€31,95</span>
             </div>
 
+            <div class="quantity-control">
+                <button class="qty-btn" onclick="adjustQuantity(-1)">-</button>
+                <input type="number" id="quantity" value="1" min="1" max="99">
+                <button class="qty-btn" onclick="adjustQuantity(1)">+</button>
+            </div>
+
             <button class="order-btn">Direct bestellen</button>
+        </div>
+        
+        <div class="image-section">
+            <img src="PLA2100.jpg" alt="Doorzichtig tafelzeil 2mm dik" loading="lazy">
         </div>
     </div>
 
     <script>
+        const CONFIG = {
+            maxWidth: 140,
+            maxLength: 2000,
+            pricePerM2: 31.95,
+            previewWidth: 250,  // Vaste breedte preview-container
+            previewHeight: 200  // Vaste hoogte preview-container
+        };
+
+        const elements = {
+            width: document.getElementById('width'),
+            length: document.getElementById('length'),
+            rectangle: document.getElementById('rectangle'),
+            price: document.getElementById('price'),
+            widthLabel: document.getElementById('widthLabel'),
+            lengthLabel: document.getElementById('lengthLabel')
+        };
+
+        function calculateDimensions() {
+            // Correcte waardes afdwingen
+            const width = Math.min(CONFIG.maxWidth, Math.max(1, elements.width.value));
+            const length = Math.min(CONFIG.maxLength, Math.max(1, elements.length.value));
+            const hasExtraLength = document.getElementById('extraLength').checked;
+            const quantity = document.getElementById('quantity').value;
+
+            // Update inputs
+            elements.width.value = width;
+            elements.length.value = length;
+
+            // SCHAALCORRECTIE - Belangrijkste aanpassing!
+            const widthScale = CONFIG.previewWidth / CONFIG.maxWidth;
+            const lengthScale = CONFIG.previewHeight / CONFIG.maxLength;
+            
+            const displayWidth = width * widthScale;
+            const displayLength = length * lengthScale;
+
+            elements.rectangle.style.width = `${displayWidth}px`;
+            elements.rectangle.style.height = `${displayLength}px`;
+
+            // Update labels
+            elements.widthLabel.textContent = `${width} cm`;
+            elements.lengthLabel.textContent = `${hasExtraLength ? 
+                `${Math.round(length * 1.01)} cm` : 
+                `${length} cm`}`;
+
+            // Prijsberekening
+            const actualLength = hasExtraLength ? length * 1.01 : length;
+            const price = (width/100 * actualLength/100 * CONFIG.pricePerM2 * quantity).toFixed(2);
+            elements.price.textContent = `€${price}`;
+        }
+
         function adjustQuantity(change) {
             const input = document.getElementById('quantity');
             let newVal = parseInt(input.value) + change;
@@ -201,6 +317,16 @@
             input.value = newVal;
             calculateDimensions();
         }
+
+        // Event listeners
+        [elements.width, elements.length].forEach(input => {
+            input.addEventListener('input', calculateDimensions);
+        });
+        document.getElementById('extraLength').addEventListener('change', calculateDimensions);
+        document.getElementById('quantity').addEventListener('input', calculateDimensions);
+
+        // Init
+        calculateDimensions();
     </script>
 </body>
 </html>

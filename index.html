@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Doorzichtig Tafelzeil 2mm - Configurator</title>
   <style>
     /* Basisstijlen */
@@ -236,7 +236,7 @@
       <div class="input-group">
         <label style="display: flex; align-items: center; gap: 10px;">
           <input type="checkbox" id="extraLength" style="width: 20px; height: 20px;">
-          +1% gratis extra
+          +1% gratis extra (toon in breedte & lengte, niet in prijs)
         </label>
       </div>
 
@@ -277,9 +277,8 @@
       maxWidth: 140,
       maxLength: 2000,
       pricePerM2: 31.95,
-      // Voor onafhankelijke schaling:
-      previewWidth: 250,
-      previewHeight: 200
+      previewWidth: 250,  // maximale breedte van de preview-container
+      previewHeight: 200  // maximale hoogte van de preview-container
     };
 
     const elements = {
@@ -292,63 +291,65 @@
     };
 
     function calculateDimensions() {
-      // Zorg dat de invoer binnen de limieten valt
+      // Lees en corrigeer de invoer
       let widthVal = Math.min(CONFIG.maxWidth, Math.max(1, parseInt(elements.width.value)));
       let lengthVal = Math.min(CONFIG.maxLength, Math.max(1, parseInt(elements.length.value)));
       const hasExtra = document.getElementById('extraLength').checked;
       const quantity = parseInt(document.getElementById('quantity').value) || 1;
 
-      // Update de inputvelden (indien buiten de limiet)
+      // Zet eventuele buiten-limiet invoer terug
       elements.width.value = widthVal;
       elements.length.value = lengthVal;
 
-      // +1% gratis tonen in de preview (maar niet meerekenen voor de prijs)
+      // +1% gratis alleen visueel
       const displayW = hasExtra ? widthVal * 1.01 : widthVal;
       const displayL = hasExtra ? lengthVal * 1.01 : lengthVal;
 
-      // Bepaal de onafhankelijke schaalfactoren:
-      const scaleW = CONFIG.previewWidth / CONFIG.maxWidth;
-      const scaleL = CONFIG.previewHeight / CONFIG.maxLength;
+      // Bepaal één schaalfactor zodat de vorm in de preview past met juiste verhouding
+      const scale = Math.min(
+        CONFIG.previewWidth / displayW,
+        CONFIG.previewHeight / displayL
+      );
 
-      // Pas de rechthoekgrootte toe:
-      elements.rectangle.style.width = (displayW * scaleW) + 'px';
-      elements.rectangle.style.height = (displayL * scaleL) + 'px';
+      // Pas afmetingen toe
+      elements.rectangle.style.width = (displayW * scale) + 'px';
+      elements.rectangle.style.height = (displayL * scale) + 'px';
 
-      // Update de labels:
+      // Update labels
       elements.widthLabel.textContent = `${Math.round(displayW)} cm`;
       elements.lengthLabel.textContent = `${Math.round(displayL)} cm`;
 
-      // Prijsberekening (zonder extra 1%)
+      // Prijsberekening (zonder +1%)
       const price = ((widthVal / 100) * (lengthVal / 100) * CONFIG.pricePerM2 * quantity).toFixed(2);
       elements.price.textContent = `€${price}`;
     }
 
-    // Breedte aanpassen
+    // Knoppen voor breedte
     function adjustWidth(change) {
       const input = elements.width;
       let newVal = parseInt(input.value) + change;
-      if(newVal < 1) newVal = 1;
-      if(newVal > CONFIG.maxWidth) newVal = CONFIG.maxWidth;
+      if (newVal < 1) newVal = 1;
+      if (newVal > CONFIG.maxWidth) newVal = CONFIG.maxWidth;
       input.value = newVal;
       calculateDimensions();
     }
 
-    // Lengte aanpassen
+    // Knoppen voor lengte
     function adjustLength(change) {
       const input = elements.length;
       let newVal = parseInt(input.value) + change;
-      if(newVal < 1) newVal = 1;
-      if(newVal > CONFIG.maxLength) newVal = CONFIG.maxLength;
+      if (newVal < 1) newVal = 1;
+      if (newVal > CONFIG.maxLength) newVal = CONFIG.maxLength;
       input.value = newVal;
       calculateDimensions();
     }
 
-    // Aantal stuks aanpassen
+    // Knoppen voor aantal
     function adjustQuantity(change) {
       const input = document.getElementById('quantity');
       let newVal = parseInt(input.value) + change;
-      if(newVal < 1) newVal = 1;
-      if(newVal > 99) newVal = 99;
+      if (newVal < 1) newVal = 1;
+      if (newVal > 99) newVal = 99;
       input.value = newVal;
       calculateDimensions();
     }
@@ -359,7 +360,7 @@
     document.getElementById('extraLength').addEventListener('change', calculateDimensions);
     document.getElementById('quantity').addEventListener('input', calculateDimensions);
 
-    // Initialisatie
+    // Init
     calculateDimensions();
   </script>
 </body>

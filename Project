@@ -42,10 +42,10 @@
       margin-top: 20px;
       text-align: center;
     }
-    /* De rechthoek in de preview, met transparant Hubo-blue */
+    /* De rechthoek in de preview, met transparant Hubo-blue (#001D85) */
     .preview div {
       display: inline-block;
-      background-color: rgba(0, 29, 133, 0.2); /* Hubo-blue #001D85 met alpha */
+      background-color: rgba(0, 29, 133, 0.2); 
     }
 
     /* De order-sectie met prijs, aantal, en bestelknop in één rij */
@@ -99,20 +99,20 @@
       border-radius: 8px;
     }
 
-    /* De groene CTA-knop (Hubo-green #669933) */
-    .btn-green {
+    /* Bestelknop - nu ook blauw */
+    .btn-blue {
       font-family: inherit;
       font-size: inherit;
       border-radius: 8px;
       cursor: pointer;
-      border: 2px solid #669933;
-      background: #669933;
+      border: 2px solid #001D85;
+      background: #001D85;
       color: white;
       padding: 12px 20px;
       transition: background 0.2s, color 0.2s;
     }
-    .btn-green:hover {
-      background: #5a8c2e; /* Iets donkerder groen bij hover */
+    .btn-blue:hover {
+      background: #00155F; /* Iets donkerder blauw bij hover */
     }
 
     /* Responsive aanpassingen (optioneel) */
@@ -171,8 +171,8 @@
         <button class="qty-btn" onclick="adjustQuantity(1)">+</button>
       </div>
 
-      <!-- Bestelknop in groen -->
-      <button class="btn-green" id="orderBtn">Direct bestellen</button>
+      <!-- Bestelknop (blauw) -->
+      <button class="btn-blue" id="orderBtn">Direct bestellen</button>
     </div>
   </div>
   

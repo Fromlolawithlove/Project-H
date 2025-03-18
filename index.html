@@ -41,7 +41,7 @@
       min-width: 320px;
       padding-right: 30px;
     }
-
+    
     /* Input-groepen */
     .input-group {
       margin-bottom: 25px;
@@ -53,7 +53,7 @@
       font-weight: 600;
       font-size: 15px;
     }
-
+    
     /* Flexcontainer voor breedte en lengte */
     .dimensions-row {
       display: flex;
@@ -65,7 +65,7 @@
       align-items: center;
       gap: 10px;
     }
-
+    
     /* Standaard inputstijl */
     .input-group input[type="number"] {
       width: 80px;
@@ -81,24 +81,24 @@
       box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
       outline: none;
     }
-
-    /* Min/plus-knoppen */
+    
+    /* Min/plus-knoppen: nu met blauwe achtergrond en witte tekst */
     .qty-btn {
       width: 40px;
       height: 40px;
       border: 2px solid #3b82f6;
-      background: white;
-      color: #3b82f6;
+      background: #3b82f6;
+      color: white;
       border-radius: 8px;
       font-size: 20px;
       cursor: pointer;
       transition: all 0.2s;
     }
     .qty-btn:hover {
-      background: #3b82f6;
+      background: #00155F; /* Iets donkerder blauw bij hover */
       color: white;
     }
-
+    
     /* Preview-container */
     .preview-container {
       position: relative;
@@ -110,7 +110,7 @@
       border: 2px solid #e2e8f0;
     }
     #rectangle {
-      background-color: rgba(59, 130, 246, 0.1);
+      background-color: #3b82f6; /* Vaste blauwe kleur */
       border: 2px solid #3b82f6;
       position: absolute;
       top: 50%;
@@ -118,7 +118,7 @@
       transform: translate(-50%, -50%);
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
-
+    
     /* Labels in de preview */
     .dimension-label {
       position: absolute;
@@ -129,6 +129,8 @@
       font-size: 13px;
       font-weight: 500;
       box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      /* Voeg een text-shadow toe zodat de tekst beter afsteekt op een blauw vlak */
+      text-shadow: 1px 1px 2px rgba(0,0,0,0.5);
     }
     .horizontal-label {
       bottom: -40px;
@@ -140,7 +142,7 @@
       top: 50%;
       transform: translateY(-50%);
     }
-
+    
     /* Order-sectie: prijs, aantal, bestelknop */
     .order-row {
       display: flex;
@@ -169,7 +171,7 @@
       font-weight: 700;
       color: #1e293b;
     }
-
+    
     /* Aantal stuks in de order-sectie */
     .quantity-control {
       display: flex;
@@ -184,11 +186,11 @@
       border: 2px solid #cbd5e1;
       border-radius: 8px;
     }
-
-    /* Bestelknop - aangepast naar blauw */
+    
+    /* Bestelknop - ook blauw */
     .order-btn {
       padding: 14px 24px;
-      background: #001D85;
+      background: #3b82f6;
       color: white;
       border: none;
       border-radius: 8px;
@@ -202,7 +204,7 @@
       background: #00155F;
       transform: translateY(-2px);
     }
-
+    
     /* Afbeelding */
     .image-section {
       flex: 1;
@@ -217,7 +219,7 @@
       border-radius: 12px;
       box-shadow: 0 8px 25px rgba(0,0,0,0.08);
     }
-
+    
     /* Responsive */
     @media (max-width: 768px) {
       .container {
@@ -257,7 +259,7 @@
         <h1>Doorzichtig tafelzeil 2mm</h1>
         <div class="subtitle">(max. 140cm breed)</div>
       </div>
-
+      
       <!-- Breedte en Lengte naast elkaar -->
       <div class="dimensions-row">
         <!-- Breedte -->
@@ -279,7 +281,7 @@
           </div>
         </div>
       </div>
-
+      
       <!-- Extra lengte checkbox -->
       <div class="input-group">
         <label style="display: flex; align-items: center; gap: 10px;">
@@ -287,7 +289,7 @@
           1% gratis extra (om de mogelijke krimp te compenseren.)
         </label>
       </div>
-
+      
       <!-- Preview -->
       <div class="preview-container">
         <div id="rectangle">
@@ -297,7 +299,7 @@
           <span class="dimension-label vertical-label" id="lengthLabel">100 cm</span>
         </div>
       </div>
-
+      
       <!-- Bestel-sectie: prijs, aantal, bestelknop -->
       <div class="order-row">
         <!-- Prijsblok -->
@@ -320,7 +322,7 @@
       <img src="PLA2100.jpg" alt="Doorzichtig tafelzeil 2mm dik" loading="lazy">
     </div>
   </div>
-
+  
   <script>
     const CONFIG = {
       maxWidth: 140,
@@ -329,7 +331,7 @@
       previewWidth: 250,  // maximale breedte preview-container
       previewHeight: 200  // maximale hoogte preview-container
     };
-
+    
     const elements = {
       width: document.getElementById('width'),
       length: document.getElementById('length'),
@@ -338,41 +340,41 @@
       widthLabel: document.getElementById('widthLabel'),
       lengthLabel: document.getElementById('lengthLabel')
     };
-
+    
     function calculateDimensions() {
       // Lees en corrigeer de invoer
       let widthVal = Math.min(CONFIG.maxWidth, Math.max(1, parseInt(elements.width.value)));
       let lengthVal = Math.min(CONFIG.maxLength, Math.max(1, parseInt(elements.length.value)));
       const hasExtra = document.getElementById('extraLength').checked;
       const quantity = parseInt(document.getElementById('quantity').value) || 1;
-
+      
       // Zet invoervelden indien buiten limiet
       elements.width.value = widthVal;
       elements.length.value = lengthVal;
-
+      
       // +1% gratis visueel toepassen
       const displayW = hasExtra ? widthVal * 1.01 : widthVal;
       const displayL = hasExtra ? lengthVal * 1.01 : lengthVal;
-
+      
       // Bepaal één schaalfactor, zodat de ratio klopt
       const scale = Math.min(
         CONFIG.previewWidth / displayW,
         CONFIG.previewHeight / displayL
       );
-
+      
       // Pas afmetingen toe
       elements.rectangle.style.width = (displayW * scale) + 'px';
       elements.rectangle.style.height = (displayL * scale) + 'px';
-
+      
       // Update labels
       elements.widthLabel.textContent = `${Math.round(displayW)} cm`;
       elements.lengthLabel.textContent = `${Math.round(displayL)} cm`;
-
+      
       // Prijsberekening (zonder extra 1%)
       const price = ((widthVal / 100) * (lengthVal / 100) * CONFIG.pricePerM2 * quantity).toFixed(2);
       elements.price.textContent = `€${price}`;
     }
-
+    
     // Breedte aanpassen
     function adjustWidth(change) {
       const input = elements.width;
@@ -382,7 +384,7 @@
       input.value = newVal;
       calculateDimensions();
     }
-
+    
     // Lengte aanpassen
     function adjustLength(change) {
       const input = elements.length;
@@ -392,7 +394,7 @@
       input.value = newVal;
       calculateDimensions();
     }
-
+    
     // Aantal aanpassen
     function adjustQuantity(change) {
       const input = document.getElementById('quantity');
@@ -402,13 +404,13 @@
       input.value = newVal;
       calculateDimensions();
     }
-
+    
     // Event listeners
     elements.width.addEventListener('input', calculateDimensions);
     elements.length.addEventListener('input', calculateDimensions);
     document.getElementById('extraLength').addEventListener('change', calculateDimensions);
     document.getElementById('quantity').addEventListener('input', calculateDimensions);
-
+    
     // Init
     calculateDimensions();
   </script>

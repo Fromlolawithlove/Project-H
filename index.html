@@ -1,59 +1,416 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Configurator Transparante Plastiek</title>
-    <style>
-        body { font-family: Arial, sans-serif; padding: 20px; }
-        .configurator { max-width: 500px; padding: 20px; border: 1px solid #ccc; border-radius: 8px; }
-        label { display: block; margin-top: 10px; }
-        input { width: 100%; padding: 8px; margin-top: 5px; }
-        .preview { margin-top: 20px; text-align: center; }
-        .preview div { display: inline-block; background-color: rgba(0, 0, 255, 0.2); }
-        .price { font-size: 18px; font-weight: bold; margin-top: 10px; }
-    </style>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Doorzichtig Tafelzeil 2mm - Configurator</title>
+  <style>
+    /* Basisstijlen */
+    body {
+      font-family: 'Arial', sans-serif;
+      margin: 0;
+      padding: 20px;
+      background-color: #f8fafc;
+    }
+    .container {
+      max-width: 1200px;
+      margin: 40px auto;
+      background: white;
+      padding: 30px;
+      border-radius: 15px;
+      box-shadow: 0 5px 25px rgba(0,0,0,0.08);
+      display: flex;
+      gap: 40px;
+    }
+    .product-header {
+      text-align: center;
+      margin-bottom: 30px;
+    }
+    .product-header h1 {
+      color: #1e293b;
+      font-size: 28px;
+      margin: 0;
+    }
+    .product-header .subtitle {
+      color: #64748b;
+      font-size: 16px;
+      margin-top: 5px;
+    }
+    .config-section {
+      flex: 1;
+      min-width: 320px;
+      padding-right: 30px;
+    }
+
+    /* Input-groepen */
+    .input-group {
+      margin-bottom: 25px;
+    }
+    .input-group label {
+      display: block;
+      margin-bottom: 10px;
+      color: #334155;
+      font-weight: 600;
+      font-size: 15px;
+    }
+
+    /* Flexcontainer voor breedte en lengte */
+    .dimensions-row {
+      display: flex;
+      gap: 20px;
+      align-items: flex-start;
+    }
+    .flex-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    /* Standaard inputstijl */
+    .input-group input[type="number"] {
+      width: 80px;
+      padding: 12px 15px;
+      border: 2px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 16px;
+      transition: all 0.3s ease;
+      text-align: center;
+    }
+    .input-group input[type="number"]:focus {
+      border-color: #3b82f6;
+      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
+      outline: none;
+    }
+
+    /* Min/plus-knoppen */
+    .qty-btn {
+      width: 40px;
+      height: 40px;
+      border: 2px solid #3b82f6;
+      background: white;
+      color: #3b82f6;
+      border-radius: 8px;
+      font-size: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .qty-btn:hover {
+      background: #3b82f6;
+      color: white;
+    }
+
+    /* Preview-container */
+    .preview-container {
+      position: relative;
+      margin: 30px 0;
+      padding: 25px;
+      background: #f8fafc;
+      border-radius: 12px;
+      min-height: 280px;
+      border: 2px solid #e2e8f0;
+    }
+    #rectangle {
+      background-color: rgba(59, 130, 246, 0.1);
+      border: 2px solid #3b82f6;
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+
+    /* Labels in de preview */
+    .dimension-label {
+      position: absolute;
+      background: #3b82f6;
+      color: white;
+      padding: 6px 12px;
+      border-radius: 6px;
+      font-size: 13px;
+      font-weight: 500;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+    }
+    .horizontal-label {
+      bottom: -40px;
+      left: 50%;
+      transform: translateX(-50%);
+    }
+    .vertical-label {
+      left: -50px;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+
+    /* Order-sectie: prijs, aantal, bestelknop */
+    .order-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      background: #f1f5f9;
+      border-radius: 8px;
+      padding: 16px;
+      margin-top: 30px; /* ruimte boven de ordersectie */
+    }
+    /* Prijsblok in de order-sectie */
+    .price-block {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 4px;
+    }
+    .price-label {
+      font-size: 14px;
+      color: #1e293b;
+      font-weight: 600;
+    }
+    .price-value {
+      font-size: 24px;
+      font-weight: 700;
+      color: #1e293b;
+    }
+
+    /* Aantal stuks in de order-sectie */
+    .quantity-control {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    #quantity {
+      width: 70px;
+      text-align: center;
+      font-size: 18px;
+      padding: 8px;
+      border: 2px solid #cbd5e1;
+      border-radius: 8px;
+    }
+
+    /* Bestelknop */
+    .order-btn {
+      padding: 14px 24px;
+      background: #10b981;
+      color: white;
+      border: none;
+      border-radius: 8px;
+      font-size: 16px;
+      font-weight: 600;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+    }
+    .order-btn:hover {
+      background: #059669;
+      transform: translateY(-2px);
+    }
+
+    /* Afbeelding */
+    .image-section {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    .image-section img {
+      max-width: 100%;
+      height: auto;
+      border-radius: 12px;
+      box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+    }
+
+    /* Responsive */
+    @media (max-width: 768px) {
+      .container {
+        flex-direction: column;
+        padding: 20px;
+        gap: 30px;
+      }
+      .config-section {
+        padding-right: 0;
+      }
+      .input-group input {
+        max-width: 100%;
+      }
+      .preview-container {
+        min-height: 250px;
+      }
+      .product-header h1 {
+        font-size: 24px;
+      }
+      .dimensions-row {
+        flex-direction: column;
+      }
+      .order-row {
+        flex-direction: column;
+        align-items: stretch;
+      }
+      .price-block {
+        margin-bottom: 10px;
+      }
+    }
+  </style>
 </head>
 <body>
-    <h2>Configurator - Transparante Plastiek</h2>
-    <div class="configurator">
-        <label for="width">Breedte (cm) - Max 140cm:</label>
-        <input type="number" id="width" min="10" max="140" value="100">
-        
-        <label for="length">Lengte (cm) - Max 2000cm:</label>
-        <input type="number" id="length" min="10" max="2000" value="100">
-        
-        <label><input type="checkbox" id="extraLength"> Ik wil 1% gratis extra lengte</label>
-        
-        <label><input type="checkbox" id="beveledEdges"> Afgeschuinde kanten (+€6,95)</label>
-        
-        <div class="preview">
-            <h3>Voorbeeld:</h3>
-            <div id="rectangle" style="width: 100px; height: 100px;"></div>
+  <div class="container">
+    <div class="config-section">
+      <div class="product-header">
+        <h1>Doorzichtig tafelzeil 2mm</h1>
+        <div class="subtitle">(max. 140cm breed)</div>
+      </div>
+
+      <!-- Breedte en Lengte naast elkaar -->
+      <div class="dimensions-row">
+        <!-- Breedte -->
+        <div class="input-group">
+          <label for="width">Breedte (cm)</label>
+          <div class="flex-row">
+            <button class="qty-btn" onclick="adjustWidth(-1)">-</button>
+            <input type="number" id="width" min="1" max="140" value="100">
+            <button class="qty-btn" onclick="adjustWidth(1)">+</button>
+          </div>
         </div>
-        
-        <p class="price">Prijs: €<span id="price">31,95</span></p>
+        <!-- Lengte -->
+        <div class="input-group">
+          <label for="length">Lengte (cm)</label>
+          <div class="flex-row">
+            <button class="qty-btn" onclick="adjustLength(-1)">-</button>
+            <input type="number" id="length" min="1" max="2000" value="100">
+            <button class="qty-btn" onclick="adjustLength(1)">+</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Extra lengte checkbox -->
+      <div class="input-group">
+        <label style="display: flex; align-items: center; gap: 10px;">
+          <input type="checkbox" id="extraLength" style="width: 20px; height: 20px;">
+          1% gratis extra (om de mogelijke krimp te compenseren.)
+        </label>
+      </div>
+
+      <!-- Preview -->
+      <div class="preview-container">
+        <div id="rectangle">
+          <!-- Breedte-label onderaan (horizontaal) -->
+          <span class="dimension-label horizontal-label" id="widthLabel">100 cm</span>
+          <!-- Lengte-label links (verticaal) -->
+          <span class="dimension-label vertical-label" id="lengthLabel">100 cm</span>
+        </div>
+      </div>
+
+      <!-- Bestel-sectie: prijs, aantal, bestelknop -->
+      <div class="order-row">
+        <!-- Prijsblok -->
+        <div class="price-block">
+          <span class="price-label">Totaalprijs</span>
+          <span class="price-value" id="price">€31,95</span>
+        </div>
+        <!-- Aantal stuks -->
+        <div class="quantity-control">
+          <button class="qty-btn" onclick="adjustQuantity(-1)">-</button>
+          <input type="number" id="quantity" value="1" min="1" max="99">
+          <button class="qty-btn" onclick="adjustQuantity(1)">+</button>
+        </div>
+        <!-- Bestelknop -->
+        <button class="order-btn">Direct bestellen</button>
+      </div>
     </div>
     
-    <script>
-        const pricePerM2 = 31.95;
-        document.querySelectorAll('input').forEach(input => input.addEventListener('input', updatePrice));
-        
-        function updatePrice() {
-            let width = parseFloat(document.getElementById('width').value) / 100;
-            let length = parseFloat(document.getElementById('length').value) / 100;
-            let extraLength = document.getElementById('extraLength').checked ? length * 1.01 : length;
-            let beveledEdges = document.getElementById('beveledEdges').checked ? 6.95 : 0;
-            
-            let totalPrice = (width * extraLength * pricePerM2) + beveledEdges;
-            document.getElementById('price').textContent = totalPrice.toFixed(2);
-            
-            let rect = document.getElementById('rectangle');
-            rect.style.width = (width * 200) + 'px';
-            rect.style.height = (length * 50) + 'px';
-        }
-        
-        updatePrice();
-    </script>
+    <div class="image-section">
+      <img src="PLA2100.jpg" alt="Doorzichtig tafelzeil 2mm dik" loading="lazy">
+    </div>
+  </div>
+
+  <script>
+    const CONFIG = {
+      maxWidth: 140,
+      maxLength: 2000,
+      pricePerM2: 33.95,
+      previewWidth: 250,  // maximale breedte preview-container
+      previewHeight: 200  // maximale hoogte preview-container
+    };
+
+    const elements = {
+      width: document.getElementById('width'),
+      length: document.getElementById('length'),
+      rectangle: document.getElementById('rectangle'),
+      price: document.getElementById('price'),
+      widthLabel: document.getElementById('widthLabel'),
+      lengthLabel: document.getElementById('lengthLabel')
+    };
+
+    function calculateDimensions() {
+      // Lees en corrigeer de invoer
+      let widthVal = Math.min(CONFIG.maxWidth, Math.max(1, parseInt(elements.width.value)));
+      let lengthVal = Math.min(CONFIG.maxLength, Math.max(1, parseInt(elements.length.value)));
+      const hasExtra = document.getElementById('extraLength').checked;
+      const quantity = parseInt(document.getElementById('quantity').value) || 1;
+
+      // Zet invoervelden indien buiten limiet
+      elements.width.value = widthVal;
+      elements.length.value = lengthVal;
+
+      // +1% gratis visueel toepassen
+      const displayW = hasExtra ? widthVal * 1.01 : widthVal;
+      const displayL = hasExtra ? lengthVal * 1.01 : lengthVal;
+
+      // Bepaal één schaalfactor, zodat de ratio klopt
+      const scale = Math.min(
+        CONFIG.previewWidth / displayW,
+        CONFIG.previewHeight / displayL
+      );
+
+      // Pas afmetingen toe
+      elements.rectangle.style.width = (displayW * scale) + 'px';
+      elements.rectangle.style.height = (displayL * scale) + 'px';
+
+      // Update labels
+      elements.widthLabel.textContent = `${Math.round(displayW)} cm`;
+      elements.lengthLabel.textContent = `${Math.round(displayL)} cm`;
+
+      // Prijsberekening (zonder extra 1%)
+      const price = ((widthVal / 100) * (lengthVal / 100) * CONFIG.pricePerM2 * quantity).toFixed(2);
+      elements.price.textContent = `€${price}`;
+    }
+
+    // Breedte aanpassen
+    function adjustWidth(change) {
+      const input = elements.width;
+      let newVal = parseInt(input.value) + change;
+      if (newVal < 1) newVal = 1;
+      if (newVal > CONFIG.maxWidth) newVal = CONFIG.maxWidth;
+      input.value = newVal;
+      calculateDimensions();
+    }
+
+    // Lengte aanpassen
+    function adjustLength(change) {
+      const input = elements.length;
+      let newVal = parseInt(input.value) + change;
+      if (newVal < 1) newVal = 1;
+      if (newVal > CONFIG.maxLength) newVal = CONFIG.maxLength;
+      input.value = newVal;
+      calculateDimensions();
+    }
+
+    // Aantal aanpassen
+    function adjustQuantity(change) {
+      const input = document.getElementById('quantity');
+      let newVal = parseInt(input.value) + change;
+      if (newVal < 1) newVal = 1;
+      if (newVal > 99) newVal = 99;
+      input.value = newVal;
+      calculateDimensions();
+    }
+
+    // Event listeners
+    elements.width.addEventListener('input', calculateDimensions);
+    elements.length.addEventListener('input', calculateDimensions);
+    document.getElementById('extraLength').addEventListener('change', calculateDimensions);
+    document.getElementById('quantity').addEventListener('input', calculateDimensions);
+
+    // Init
+    calculateDimensions();
+  </script>
 </body>
 </html>

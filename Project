@@ -5,101 +5,216 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Configurator Transparante Plastiek</title>
   <style>
-    body { 
-      font-family: Arial, sans-serif; 
-      padding: 20px; 
+    /* Basisinstellingen */
+    body {
+      font-family: Arial, sans-serif;
+      padding: 20px;
       color: #101010; /* Zwarte tekst */
+      margin: 0;
     }
-    .configurator { 
-      max-width: 500px; 
-      padding: 20px; 
-      border: 1px solid #ccc; 
-      border-radius: 8px; 
+    .configurator {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 20px;
+      border: 1px solid #ccc;
+      border-radius: 8px;
     }
-    label { 
-      display: block; 
-      margin-top: 10px; 
+
+    /* Labels en invoervelden */
+    label {
+      display: block;
+      margin-top: 10px;
     }
-    input { 
-      width: 100%; 
-      padding: 8px; 
-      margin-top: 5px; 
+    input[type="number"] {
+      width: 100%;
+      padding: 8px;
+      margin-top: 5px;
+      box-sizing: border-box;
     }
-    .preview { 
-      margin-top: 20px; 
-      text-align: center; 
+
+    /* Checkbox */
+    input[type="checkbox"] {
+      margin-right: 8px;
     }
-    .preview div { 
-      display: inline-block; 
-      /* Gebruik een licht transparante versie van Hubo-blue (0, 29, 133 is #001D85) */
-      background-color: rgba(0, 29, 133, 0.2); 
+
+    /* Preview container */
+    .preview {
+      margin-top: 20px;
+      text-align: center;
     }
-    .price { 
-      font-size: 18px; 
-      font-weight: bold; 
-      margin-top: 10px; 
+    /* De rechthoek in de preview, met transparant Hubo-blue */
+    .preview div {
+      display: inline-block;
+      background-color: rgba(0, 29, 133, 0.2); /* Hubo-blue #001D85 met alpha */
     }
-    /* Algemene knopstijl: knoppen krijgen Hubo-blue (#001D85) */
-    button { 
+
+    /* De order-sectie met prijs, aantal, en bestelknop in één rij */
+    .order-row {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      margin-top: 20px;
+      background: #f4f6fa; /* lichtgrijs/blauwe tint */
+      padding: 16px;
+      border-radius: 8px;
+    }
+
+    /* Prijsblok */
+    .price-block {
+      font-size: 16px;
+    }
+    .price-block span {
+      font-size: 24px;
+      font-weight: bold;
+    }
+
+    /* Hoeveelheidsknoppen en -veld */
+    .quantity-control {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .qty-btn {
+      width: 40px;
+      height: 40px;
+      border: 2px solid #001D85; /* Blauw */
+      background: white;
+      color: #001D85;
+      border-radius: 8px;
+      font-size: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .qty-btn:hover {
+      background: #001D85;
+      color: white;
+    }
+    #quantity {
+      width: 60px;
+      text-align: center;
+      font-size: 18px;
+      padding: 5px;
+      border: 2px solid #ccc;
+      border-radius: 8px;
+    }
+
+    /* De groene CTA-knop (Hubo-green #669933) */
+    .btn-green {
       font-family: inherit;
       font-size: inherit;
       border-radius: 8px;
       cursor: pointer;
-      border: 2px solid #001D85;
-      background: white;
-      color: #001D85;
-      padding: 8px 12px;
+      border: 2px solid #669933;
+      background: #669933;
+      color: white;
+      padding: 12px 20px;
       transition: background 0.2s, color 0.2s;
     }
-    button:hover { 
-      background: #001D85;
-      color: white;
+    .btn-green:hover {
+      background: #5a8c2e; /* Iets donkerder groen bij hover */
+    }
+
+    /* Responsive aanpassingen (optioneel) */
+    @media (max-width: 480px) {
+      .order-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
+      .quantity-control {
+        margin-top: 10px;
+      }
     }
   </style>
 </head>
 <body>
   <h2>Configurator - Transparante Plastiek</h2>
   <div class="configurator">
+    <!-- Breedte -->
     <label for="width">Breedte (cm) - Max 140cm:</label>
     <input type="number" id="width" min="10" max="140" value="100">
-    
+
+    <!-- Lengte -->
     <label for="length">Lengte (cm) - Max 2000cm:</label>
     <input type="number" id="length" min="10" max="2000" value="100">
-    
+
+    <!-- Checkbox 1% extra -->
     <label>
-      <input type="checkbox" id="extraLength"> Ik wil 1% gratis extra lengte
+      <input type="checkbox" id="extraLength">
+      Ik wil 1% gratis extra lengte
     </label>
-    
+
+    <!-- Checkbox afgeschuinde kanten -->
     <label>
-      <input type="checkbox" id="beveledEdges"> Afgeschuinde kanten (+€6,95)
+      <input type="checkbox" id="beveledEdges">
+      Afgeschuinde kanten (+€6,95)
     </label>
-    
+
+    <!-- Voorbeeld/Preview -->
     <div class="preview">
       <h3>Voorbeeld:</h3>
       <div id="rectangle" style="width: 100px; height: 100px;"></div>
     </div>
-    
-    <p class="price">Prijs: €<span id="price">31,95</span></p>
+
+    <!-- Order-sectie (prijs, aantal, bestelknop) -->
+    <div class="order-row">
+      <!-- Prijsblok -->
+      <div class="price-block">
+        Totaalprijs<br>
+        <span>€<span id="price">31,95</span></span>
+      </div>
+
+      <!-- Hoeveelheid instellen -->
+      <div class="quantity-control">
+        <button class="qty-btn" onclick="adjustQuantity(-1)">-</button>
+        <input type="number" id="quantity" value="1" min="1" max="99">
+        <button class="qty-btn" onclick="adjustQuantity(1)">+</button>
+      </div>
+
+      <!-- Bestelknop in groen -->
+      <button class="btn-green" id="orderBtn">Direct bestellen</button>
+    </div>
   </div>
   
   <script>
     const pricePerM2 = 31.95;
-    document.querySelectorAll('input').forEach(input => input.addEventListener('input', updatePrice));
-    
+    // Eventlisteners voor alle inputs
+    document.querySelectorAll('input').forEach(input => {
+      input.addEventListener('input', updatePrice);
+    });
+
+    // Functie om aantal stuks te verhogen/verlagen
+    function adjustQuantity(change) {
+      const input = document.getElementById('quantity');
+      let newVal = parseInt(input.value) + change;
+      if (newVal < 1) newVal = 1;
+      if (newVal > 99) newVal = 99;
+      input.value = newVal;
+      updatePrice();
+    }
+
     function updatePrice() {
       let width = parseFloat(document.getElementById('width').value) / 100;
       let length = parseFloat(document.getElementById('length').value) / 100;
       let extraLength = document.getElementById('extraLength').checked ? length * 1.01 : length;
       let beveledEdges = document.getElementById('beveledEdges').checked ? 6.95 : 0;
-      
-      let totalPrice = (width * extraLength * pricePerM2) + beveledEdges;
+      let quantity = parseInt(document.getElementById('quantity').value) || 1;
+
+      // Basisprijs per stuk
+      let totalPriceSingle = (width * extraLength * pricePerM2) + beveledEdges;
+      // Totaalprijs voor alle stuks
+      let totalPrice = totalPriceSingle * quantity;
+
+      // Weergeven in de UI
       document.getElementById('price').textContent = totalPrice.toFixed(2);
-      
+
+      // Preview rechthoek aanpassen
       let rect = document.getElementById('rectangle');
       rect.style.width = (width * 200) + 'px';
       rect.style.height = (length * 50) + 'px';
     }
-    
+
+    // Initialiseren
     updatePrice();
   </script>
 </body>

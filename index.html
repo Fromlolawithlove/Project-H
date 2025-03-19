@@ -17,7 +17,7 @@
       color: #1e293b;
       padding: 20px;
     }
-    /* Container: standaard één kolom op mobiel, twee kolommen op desktop */
+    /* Container: standaard 1 kolom op mobiel, 2 kolommen op desktop */
     .container {
       width: 100%;
       max-width: 1200px;
@@ -30,7 +30,7 @@
       box-shadow: 0 5px 25px rgba(0,0,0,0.08);
       padding: 20px;
     }
-    /* Koptekst */
+    /* Header */
     .header {
       text-align: center;
       margin-bottom: 20px;
@@ -91,6 +91,8 @@
     .oval-icon {
       width: 40px;
       height: 60px;
+      /* Bij ovaal bedoelen we hier een “pill” waarbij de boven- en onderkant afgerond zijn,
+         wat resulteert in een rechte zijde in het midden (hier gekozen met 20px). */
       border-radius: 20px;
     }
     /* Invoer-groepen */
@@ -119,7 +121,7 @@
     }
     .input-row input[type="number"]:focus {
       border-color: #001D85;
-      box-shadow: 0 0 0 3px rgba(0, 29, 133, 0.15);
+      box-shadow: 0 0 0 3px rgba(0,29,133,0.15);
       outline: none;
     }
     /* Knoppen (min/plus) */
@@ -246,7 +248,22 @@
       border-radius: 12px;
       box-shadow: 0 8px 25px rgba(0,0,0,0.08);
     }
-    /* Media queries: op desktop twee kolommen */
+    /* Info-sectie onderaan de pagina */
+    .info-section {
+      background: #f1f5f9;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 20px;
+      margin-top: 20px;
+      font-size: 14px;
+      line-height: 1.6;
+      color: #1e293b;
+    }
+    .info-section h2 {
+      margin-bottom: 10px;
+      font-size: 18px;
+    }
+    /* Media query: Desktop (2 kolommen) */
     @media (min-width: 992px) {
       .container {
         flex-direction: row;
@@ -264,7 +281,7 @@
 </head>
 <body>
   <div class="container">
-    <!-- Configurator (links op desktop, bovenaan op mobiel) -->
+    <!-- Configurator -->
     <div class="config-section">
       <div class="header">
         <h1>Transparant tafelzeil generator</h1>
@@ -369,18 +386,49 @@
       </div>
     </div>
 
-    <!-- Afbeelding (onderaan op mobiel, rechts op desktop) -->
+    <!-- Afbeelding -->
     <div class="image-section">
       <img src="PLA2100.jpg" alt="Transparant tafelzeil" loading="lazy">
     </div>
   </div>
 
+  <!-- Info-sectie met prijszetting en productinformatie -->
+  <div class="info-section">
+    <h2>Prijszetting en Productinformatie</h2>
+    <p>
+      <strong>Prijszetting (consumenten, incl. btw):</strong><br>
+      - Tot 100 cm breedte: €32,95 per lopende meter<br>
+      - Tussen 100 en 120 cm: €36,95 per lopende meter<br>
+      - Tussen 120 en 140 cm: €39,95 per lopende meter
+    </p>
+    <p>
+      Dit betekent dat, ongeacht de werkelijke breedte, bij een breedte tot 100 cm het tafelzeil
+      altijd wordt berekend op basis van 100 cm. Als uw tafel tussen 100 en 120 cm breed is, wordt
+      de prijs van 120 cm gebruikt, en voor tafels tussen 120 en 140 cm wordt de prijs van 140 cm gehanteerd.
+    </p>
+    <p>
+      Door een doorzichtig tafelzeil van 2 mm dik op maat te maken, beschermt u uw tafel beter dan ooit.
+      U behoudt de uitstraling van uw tafel, zonder dat er losse stukken wapperen. Bovendien biedt het
+      materiaal optimale bescherming tegen stoten en vloeistoffen, waardoor schoonmaken een fluitje van een cent is.
+    </p>
+    <p>
+      <strong>Let op:</strong> Dit tafelzeil kan in de lengte 1% krimpen. Wasvoorschrift: schoonvegen met een vochtige doek.
+      Het product is minder geschikt voor glazen, gelakte, hoogglans of stenen tafels.
+    </p>
+  </div>
+
   <script>
-    /* Configuratie en elementselectie */
+    // Configuratie en elementselectie
     const CONFIG = {
       maxWidth: 140,
       maxLength: 2000,
-      basePricePerM2: 31.95,
+      // Dummy tarieven per m² (prijs per lopende meter, toegepast op een vaste breedte)
+      // Indien breedte <= 100: €32,95; >100 en <=120: €36,95; >120 en <=140: €39,95
+      priceTiers: {
+        100: 32.95,
+        120: 36.95,
+        140: 39.95
+      },
       shapeExtraPrice: {
         rectangle: 0,
         circle: 5,
@@ -408,7 +456,6 @@
     const cornerRadiusRow = document.getElementById('cornerRadiusRow');
     const cornerRadiusInput = document.getElementById('cornerRadius');
 
-    /* Helpers */
     function getSelectedShape() {
       let shape = 'rectangle';
       shapeRadios.forEach(r => {
@@ -421,7 +468,7 @@
       return Math.max(min, Math.min(val, max));
     }
 
-    /* Toon/verberg velden op basis van vorm */
+    // Toon of verberg invoervelden op basis van de gekozen vorm
     function updateVisibility() {
       let shape = getSelectedShape();
       if (shape === 'circle') {
@@ -441,6 +488,42 @@
         } else {
           roundedCornersGroup.style.display = 'none';
         }
+      }
+    }
+
+    // Bereken de prijs op basis van de gekozen afmetingen en tarieven
+    function calculatePrice(w, l, d, shape, qty) {
+      let effectiveDimension, rate;
+      if (shape === 'circle') {
+        // Voor cirkel: als de diameter ≤ 100, gebruik 100; tussen 100 en 120: gebruik 120; anders 140.
+        if (d <= 100) {
+          effectiveDimension = 100;
+          rate = CONFIG.priceTiers[100];
+        } else if (d <= 120) {
+          effectiveDimension = 120;
+          rate = CONFIG.priceTiers[120];
+        } else {
+          effectiveDimension = 140;
+          rate = CONFIG.priceTiers[140];
+        }
+        // Bereken oppervlakte (in m²) op basis van de effectieve diameter
+        const area = Math.pow(effectiveDimension / 100, 2);
+        return area * rate * qty;
+      } else {
+        // Voor andere vormen: de breedte wordt gefixeerd op 100, 120 of 140
+        if (w <= 100) {
+          effectiveDimension = 100;
+          rate = CONFIG.priceTiers[100];
+        } else if (w <= 120) {
+          effectiveDimension = 120;
+          rate = CONFIG.priceTiers[120];
+        } else {
+          effectiveDimension = 140;
+          rate = CONFIG.priceTiers[140];
+        }
+        // Gebruik de daadwerkelijke lengte (eventueel met +1% extra)
+        const area = (effectiveDimension / 100) * (l / 100);
+        return area * rate * qty;
       }
     }
 
@@ -486,14 +569,8 @@
         lengthLabel.textContent = `${Math.round(displayL)} cm`;
       }
 
-      let baseW = (shape === 'circle') ? dVal : wVal;
-      let baseL = (shape === 'circle') ? dVal : lVal;
-      let baseArea = (baseW / 100) * (baseL / 100);
-      let basePrice = baseArea * CONFIG.basePricePerM2;
-      let shapeExtra = CONFIG.shapeExtraPrice[shape] || 0;
-      let total = (basePrice + shapeExtra) * qty;
-
-      priceEl.textContent = `€${total.toFixed(2)}`;
+      let totalPrice = calculatePrice(wVal, lVal, dVal, shape, qty);
+      priceEl.textContent = `€${totalPrice.toFixed(2)}`;
     }
 
     function applyShape(shape, w, h) {
@@ -505,18 +582,15 @@
           let cornerVal = clamp(parseInt(cornerRadiusInput.value), 0, 100);
           rectangleEl.style.borderRadius = cornerVal + 'px';
         }
-      }
-      else if (shape === 'circle') {
+      } else if (shape === 'circle') {
         rectangleEl.style.width = w + 'px';
         rectangleEl.style.height = w + 'px';
         rectangleEl.style.borderRadius = '50%';
-      }
-      else if (shape === 'ellipse') {
+      } else if (shape === 'ellipse') {
         rectangleEl.style.width = w + 'px';
         rectangleEl.style.height = h + 'px';
         rectangleEl.style.borderRadius = '50%';
-      }
-      else if (shape === 'oval') {
+      } else if (shape === 'oval') {
         rectangleEl.style.width = w + 'px';
         rectangleEl.style.height = h + 'px';
         let radius = Math.min(w/2, h/2);
@@ -555,14 +629,13 @@
       calculateDimensions();
       resizeIframe();
     }
-
     function resizeIframe() {
       const newHeight = document.body.scrollHeight;
       const message = { action: 'RESIZE', height: newHeight };
       window.parent.postMessage(JSON.stringify(message), '*');
     }
 
-    /* Nieuwe functie: verstuur ordergegevens */
+    /* Nieuwe functie: verzend ordergegevens (CHANGE_PRODUCT bericht) */
     function sendOrder() {
       const shape = getSelectedShape();
       const wVal = parseInt(widthInput.value);
@@ -584,10 +657,9 @@
         orderLength = extra ? Math.round(lVal * 1.01) : lVal;
       }
       
-      // Dummy barcode
+      // Dummy barcode (vervang later met echte logica)
       const barcode = "CONFIG-" + Date.now();
       
-      // Stel het product-object samen
       const product = {
         barcode: barcode,
         title: `Transparant tafelzeil 2mm - ${shape}`,
@@ -600,6 +672,7 @@
           { code: "Shape", value: shape },
           { code: "Width", value: orderWidth + " cm" },
           { code: "Length", value: orderLength + " cm" }
+          // Eventueel extra materiaal zoals afgeronde hoeken toevoegen
         ],
         imageUrl: "https://fromlolawithlove.github.io/Project-H/PLA2100.jpg",
         category: "Tafelzeil",
@@ -617,12 +690,34 @@
     }
 
     function calculatePrice(w, l, d, shape, qty) {
-      let baseW = (shape === 'circle') ? d : w;
-      let baseL = (shape === 'circle') ? d : l;
-      const area = (baseW / 100) * (baseL / 100);
-      const basePrice = area * CONFIG.basePricePerM2;
-      const shapeExtra = CONFIG.shapeExtraPrice[shape] || 0;
-      return (basePrice + shapeExtra) * qty;
+      let effectiveDimension, rate;
+      if (shape === 'circle') {
+        if (d <= 100) {
+          effectiveDimension = 100;
+          rate = CONFIG.priceTiers ? CONFIG.priceTiers[100] : 32.95;
+        } else if (d <= 120) {
+          effectiveDimension = 120;
+          rate = CONFIG.priceTiers ? CONFIG.priceTiers[120] : 36.95;
+        } else {
+          effectiveDimension = 140;
+          rate = CONFIG.priceTiers ? CONFIG.priceTiers[140] : 39.95;
+        }
+        const area = Math.pow(effectiveDimension / 100, 2);
+        return area * rate * qty;
+      } else {
+        if (w <= 100) {
+          effectiveDimension = 100;
+          rate = CONFIG.priceTiers ? CONFIG.priceTiers[100] : 32.95;
+        } else if (w <= 120) {
+          effectiveDimension = 120;
+          rate = CONFIG.priceTiers ? CONFIG.priceTiers[120] : 36.95;
+        } else {
+          effectiveDimension = 140;
+          rate = CONFIG.priceTiers ? CONFIG.priceTiers[140] : 39.95;
+        }
+        const area = (effectiveDimension / 100) * (l / 100);
+        return area * rate * qty;
+      }
     }
 
     function encryptPurchasePrice(price, signatureKey) {
@@ -631,11 +726,10 @@
     }
 
     function generateHmac(products, signatureKey) {
-      // Placeholder: retourneer een dummy HMAC
+      // Placeholder: retourneer een dummy HMAC-string
       return "DUMMY-SIGNATURE";
     }
 
-    // Koppel de orderknop aan de sendOrder functie
     document.getElementById('orderBtn').addEventListener('click', sendOrder);
 
     window.addEventListener('load', () => {

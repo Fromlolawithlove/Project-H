@@ -119,8 +119,6 @@
     }
     .shape-option {
       display: flex;
-     
-<!-- Vervolg van de code... (vervolg op de shape-choices) -->
       flex-direction: column;
       align-items: center;
       cursor: pointer;
@@ -150,23 +148,23 @@
       text-align: center;
     }
 
-    /* Verticale vormiconen */
-    .rectangle-icon { /* Rechthoek: 30×50, geen border-radius */
+    /* Voorbeeldiconen (verticaal) */
+    .rectangle-icon {
       width: 30px;
       height: 50px;
       border-radius: 0;
     }
-    .circle-icon { /* Cirkel: 40×40, border-radius: 50% */
+    .circle-icon {
       width: 40px;
       height: 40px;
       border-radius: 50%;
     }
-    .ellipse-icon { /* Ellips: 30×50, border-radius: 50% */
+    .ellipse-icon {
       width: 30px;
       height: 50px;
       border-radius: 50%;
     }
-    .oval-icon { /* Ovaal/pill: 30×50, border-radius: half */
+    .oval-icon {
       width: 30px;
       height: 50px;
       border-radius: 15px;
@@ -380,10 +378,10 @@
         <div class="slider-group">
           <label>Breedte (cm)</label>
           <div class="slider-row">
-            <input type="range" id="widthRange" min="40" max="140" value="100"
+            <input type="range" id="widthRange" min="70" max="140" value="100"
                    oninput="syncWidthFromSlider()" 
                    onblur="clampWidth()">
-            <input type="number" id="width" min="40" max="140" value="100"
+            <input type="number" id="width" min="70" max="140" value="100"
                    oninput="syncWidthFromNumber()" 
                    onblur="clampWidth()">
           </div>
@@ -391,10 +389,10 @@
         <div class="slider-group">
           <label>Lengte (cm)</label>
           <div class="slider-row">
-            <input type="range" id="lengthRange" min="40" max="2000" value="100"
+            <input type="range" id="lengthRange" min="70" max="2000" value="100"
                    oninput="syncLengthFromSlider()" 
                    onblur="clampLength()">
-            <input type="number" id="length" min="40" max="2000" value="100"
+            <input type="number" id="length" min="70" max="2000" value="100"
                    oninput="syncLengthFromNumber()" 
                    onblur="clampLength()">
           </div>
@@ -407,10 +405,10 @@
         <div class="slider-group">
           <label>Diameter (cm)</label>
           <div class="slider-row">
-            <input type="range" id="diameterRange" min="40" max="2000" value="100"
+            <input type="range" id="diameterRange" min="70" max="2000" value="100"
                    oninput="syncDiameterFromSlider()" 
                    onblur="clampDiameter()">
-            <input type="number" id="diameter" min="40" max="2000" value="100"
+            <input type="number" id="diameter" min="70" max="2000" value="100"
                    oninput="syncDiameterFromNumber()" 
                    onblur="clampDiameter()">
           </div>
@@ -467,9 +465,8 @@
   <script>
     /* ---------- CONFIG ---------- */
     const CONFIG = {
-      minRectEllipseOval: 50,   // Minimale 50 cm voor ellips & ovaal
-      minCircle: 40,           // Minimale 40 cm voor cirkel
-      minRect: 40,             // Minimale 40 cm voor rechthoek
+      minWidth: 70,        // Minimale breedte/diameter = 70 cm voor alle vormen
+      minLength: 70,       // Minimale lengte = 70 cm
       maxWidth: 140,
       maxLength: 2000,
       basePricePerM2: 31.95,
@@ -535,17 +532,9 @@
       });
       return shape;
     }
-
     function clamp(val, min, max) {
       if (isNaN(val)) return min;
       return Math.max(min, Math.min(val, max));
-    }
-
-    function getMinValueForShape() {
-      const shape = getSelectedShape();
-      if (shape === 'circle') return CONFIG.minCircle;
-      if (shape === 'ellipse' || shape === 'oval') return CONFIG.minRectEllipseOval;
-      return CONFIG.minRect; // rectangle
     }
 
     /* ---------- UI LOGICA ---------- */
@@ -590,9 +579,8 @@
       updateAllNoClamp();
     }
     function clampWidth() {
-      const minVal = getMinValueForShape(); // dynamisch min
-      let val = parseFloat(widthInput.value) || minVal;
-      if (val < minVal) val = minVal;
+      let val = parseFloat(widthInput.value) || CONFIG.minWidth;
+      if (val < CONFIG.minWidth) val = CONFIG.minWidth;
       if (val > CONFIG.maxWidth) val = CONFIG.maxWidth;
       widthInput.value = Math.round(val);
       widthRange.value = widthInput.value;
@@ -609,9 +597,8 @@
       updateAllNoClamp();
     }
     function clampLength() {
-      const minVal = getMinValueForShape(); 
-      let val = parseFloat(lengthInput.value) || minVal;
-      if (val < minVal) val = minVal;
+      let val = parseFloat(lengthInput.value) || CONFIG.minLength;
+      if (val < CONFIG.minLength) val = CONFIG.minLength;
       if (val > CONFIG.maxLength) val = CONFIG.maxLength;
       lengthInput.value = Math.round(val);
       lengthRange.value = lengthInput.value;
@@ -628,9 +615,8 @@
       updateAllNoClamp();
     }
     function clampDiameter() {
-      const minVal = CONFIG.minCircle; // cirkel min 40
-      let val = parseFloat(diameterInput.value) || minVal;
-      if (val < minVal) val = minVal;
+      let val = parseFloat(diameterInput.value) || CONFIG.minWidth;
+      if (val < CONFIG.minWidth) val = CONFIG.minWidth;
       if (val > CONFIG.maxLength) val = CONFIG.maxLength;
       diameterInput.value = Math.round(val);
       diameterRange.value = diameterInput.value;
@@ -681,23 +667,23 @@
     function calculateDimensions() {
       const shape = getSelectedShape();
 
-      let wVal = parseFloat(widthInput.value) || getMinValueForShape();
-      let lVal = parseFloat(lengthInput.value) || getMinValueForShape();
-      let dVal = parseFloat(diameterInput.value) || CONFIG.minCircle;
+      let wVal = parseFloat(widthInput.value) || CONFIG.minWidth;
+      let lVal = parseFloat(lengthInput.value) || CONFIG.minLength;
+      let dVal = parseFloat(diameterInput.value) || CONFIG.minWidth;
       let qty = parseInt(quantityInput.value) || 1;
       const hasExtra = extraLengthCheck.checked;
 
-      // Display in preview
+      // VISUEEL: 1% extra op zowel breedte als lengte
       let displayW, displayL;
       if (shape === 'circle') {
         displayW = hasExtra ? dVal * 1.01 : dVal;
         displayL = displayW;
       } else {
-        displayW = wVal;
+        displayW = hasExtra ? wVal * 1.01 : wVal;
         displayL = hasExtra ? lVal * 1.01 : lVal;
       }
 
-      // Scale
+      // Preview scale
       const scale = Math.min(
         CONFIG.previewWidth / displayW,
         CONFIG.previewHeight / displayL
@@ -707,16 +693,14 @@
 
       applyShape(shape, finalW, finalL);
 
-      if (shape === 'circle') {
-        widthLabel.textContent = `${Math.round(displayW)} cm`;
-        lengthLabel.textContent = `${Math.round(displayW)} cm`;
-      } else {
-        widthLabel.textContent = `${Math.round(displayW)} cm`;
-        lengthLabel.textContent = `${Math.round(displayL)} cm`;
-      }
+      // Labels
+      widthLabel.textContent = `${Math.round(displayW)} cm`;
+      lengthLabel.textContent = shape === 'circle'
+        ? `${Math.round(displayW)} cm`
+        : `${Math.round(displayL)} cm`;
 
-      // Prijs
-      const totalPrice = calculatePrice(shape, wVal, lVal, dVal, hasExtra, qty);
+      // Prijs (zonder 1% extra)
+      const totalPrice = calculatePrice(shape, wVal, lVal, dVal, qty);
       priceEl.textContent = `€${totalPrice.toFixed(2)}`;
     }
 
@@ -745,14 +729,14 @@
       }
     }
 
-    function calculatePrice(shape, wVal, lVal, dVal, hasExtra, qty) {
+    function calculatePrice(shape, wVal, lVal, dVal, qty) {
+      // Zonder 1% extra
       if (shape === 'circle') {
         // Cirkel: π*(r^2)
-        const diameterCm = hasExtra ? dVal * 1.01 : dVal;
-        const radiusM = (diameterCm / 2) / 100;
+        const radiusM = (dVal / 2) / 100;
         const area = Math.PI * radiusM * radiusM;
         let base = area * CONFIG.basePricePerM2;
-        let shapeSurcharge = CONFIG.shapeExtraPrice.circle || 0;
+        let shapeSurcharge = shape === 'circle' ? CONFIG.shapeExtraPrice.circle : 0;
         return (base + shapeSurcharge) * qty;
       } else {
         // Rechthoek/ellips/ovaal => 3-tier breedte
@@ -764,9 +748,10 @@
         } else {
           effectiveW = 140; rate = CONFIG.priceTiers[140];
         }
-        let lengthCm = hasExtra ? lVal * 1.01 : lVal;
-        const area = (effectiveW / 100) * (lengthCm / 100);
-        let shapeSurcharge = CONFIG.shapeExtraPrice[shape] || 0;
+        const area = (effectiveW / 100) * (lVal / 100);
+        let shapeSurcharge = 0;
+        if (shape === 'ellipse' || shape === 'oval') shapeSurcharge = 5;
+        // rectangle => 0, ellipse/oval => 5
         return (area * rate + shapeSurcharge) * qty;
       }
     }
@@ -783,21 +768,23 @@
 
     function sendOrder() {
       const shape = getSelectedShape();
-      let wVal = parseFloat(widthInput.value) || getMinValueForShape();
-      let lVal = parseFloat(lengthInput.value) || getMinValueForShape();
-      let dVal = parseFloat(diameterInput.value) || CONFIG.minCircle;
+      let wVal = parseFloat(widthInput.value) || CONFIG.minWidth;
+      let lVal = parseFloat(lengthInput.value) || CONFIG.minLength;
+      let dVal = parseFloat(diameterInput.value) || CONFIG.minWidth;
       let qty = parseInt(quantityInput.value) || 1;
       const hasExtra = extraLengthCheck.checked;
 
+      // BESTELDE breedte/lengte (zonder 1% extra)
       let orderW, orderL;
       if (shape === 'circle') {
-        orderW = orderL = hasExtra ? Math.round(dVal * 1.01) : dVal;
+        orderW = orderL = dVal; // geen +1% in de price
       } else {
         orderW = wVal;
-        orderL = hasExtra ? Math.round(lVal * 1.01) : lVal;
+        orderL = lVal;
       }
 
-      const finalPrice = calculatePrice(shape, wVal, lVal, dVal, hasExtra, qty);
+      // Prijs
+      const finalPrice = calculatePrice(shape, wVal, lVal, dVal, qty);
 
       const barcode = "CONFIG-" + Date.now();
       const product = {
@@ -811,7 +798,8 @@
         materials: [
           { code: "Shape", value: shape },
           { code: "Width", value: orderW + " cm" },
-          { code: "Length", value: orderL + " cm" }
+          { code: "Length", value: orderL + " cm" },
+          { code: "ExtraLength", value: hasExtra ? "1% gratis" : "Geen" }
         ],
         imageUrl: "https://fromlolawithlove.github.io/Project-H/PLA2100.jpg",
         category: "Tafelbeschermer",

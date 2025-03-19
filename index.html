@@ -106,6 +106,7 @@
       font-weight: 700;
       margin-bottom: 10px;
       margin-top: 15px;
+      text-align: center; /* Gecentreerd */
     }
 
     /* Vormkeuze */
@@ -114,6 +115,7 @@
       flex-wrap: wrap;
       gap: 15px;
       margin-bottom: 15px;
+      justify-content: center; /* Ook iconen centreren */
     }
     .shape-option {
       display: flex;
@@ -146,7 +148,7 @@
       text-align: center;
     }
 
-    /* Specifieke vormiconen (voorbeeld) */
+    /* Voorbeeldiconen */
     .rectangle-icon {
       width: 50px; 
       height: 35px;
@@ -219,6 +221,22 @@
       gap: 8px;
     }
 
+    /* + & - knoppen groter */
+    .qty-btn {
+      width: 40px; 
+      height: 40px;
+      border: 2px solid #001D85;
+      background: #001D85;
+      color: white;
+      border-radius: 6px;
+      font-size: 18px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .qty-btn:hover {
+      background: #00155F;
+    }
+
     /* Order-sectie */
     .order-row {
       background: #f1f5f9;
@@ -286,6 +304,13 @@
         flex: 1;
       }
     }
+
+    /* Verberg spin buttons van number inputs (optioneel) */
+    input[type=number]::-webkit-outer-spin-button,
+    input[type=number]::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
   </style>
 </head>
 <body>
@@ -318,7 +343,7 @@
       <div class="section-title">Kies de vorm</div>
       <div class="shape-choices">
         <label class="shape-option">
-          <input type="radio" name="shape" value="rectangle">
+          <input type="radio" name="shape" value="rectangle" checked>
           <div class="shape-icon rectangle-icon"></div>
           <span class="shape-label">Rechthoek<br>+€0,00</span>
         </label>
@@ -345,10 +370,10 @@
         <div class="slider-group">
           <label>Breedte (cm)</label>
           <div class="slider-row">
-            <input type="range" id="widthRange" min="70" max="140" value="100"
+            <input type="range" id="widthRange" min="40" max="140" value="100"
                    oninput="syncWidthFromSlider()" 
                    onblur="clampWidth()">
-            <input type="number" id="width" min="70" max="140" value="100"
+            <input type="number" id="width" min="40" max="140" value="100"
                    oninput="syncWidthFromNumber()" 
                    onblur="clampWidth()">
           </div>
@@ -356,10 +381,10 @@
         <div class="slider-group">
           <label>Lengte (cm)</label>
           <div class="slider-row">
-            <input type="range" id="lengthRange" min="70" max="2000" value="100"
+            <input type="range" id="lengthRange" min="40" max="2000" value="100"
                    oninput="syncLengthFromSlider()" 
                    onblur="clampLength()">
-            <input type="number" id="length" min="70" max="2000" value="100"
+            <input type="number" id="length" min="40" max="2000" value="100"
                    oninput="syncLengthFromNumber()" 
                    onblur="clampLength()">
           </div>
@@ -372,10 +397,10 @@
         <div class="slider-group">
           <label>Diameter (cm)</label>
           <div class="slider-row">
-            <input type="range" id="diameterRange" min="70" max="2000" value="100"
+            <input type="range" id="diameterRange" min="40" max="2000" value="100"
                    oninput="syncDiameterFromSlider()" 
                    onblur="clampDiameter()">
-            <input type="number" id="diameter" min="70" max="2000" value="100"
+            <input type="number" id="diameter" min="40" max="2000" value="100"
                    oninput="syncDiameterFromNumber()" 
                    onblur="clampDiameter()">
           </div>
@@ -387,14 +412,12 @@
       <div class="finishing-group">
         <div class="checkbox-line">
           <input type="checkbox" id="extraLength" style="width:18px; height:18px;"
-                 oninput="updateAllNoClamp()" 
-                 onblur="updateAllNoClamp()">
+                 oninput="updateAllNoClamp()" onblur="updateAllNoClamp()">
           <label for="extraLength">Ik wil graag 1% gratis lengte om de mogelijke krimp te compenseren.</label>
         </div>
-        <div class="checkbox-line">
+        <div class="checkbox-line" id="roundedCornersLine">
           <input type="checkbox" id="roundedCorners" style="width:18px; height:18px;"
-                 oninput="updateAllNoClamp()" 
-                 onblur="updateAllNoClamp()">
+                 oninput="updateAllNoClamp()" onblur="updateAllNoClamp()">
           <label for="roundedCorners">Afgeronde hoeken</label>
         </div>
         <div id="cornerRadiusRow" style="display:none; margin-top:10px;">
@@ -419,6 +442,7 @@
         <div class="quantity-control">
           <button class="qty-btn" onclick="adjustQuantity(-1)">-</button>
           <input type="number" id="quantity" value="1" min="1" max="99"
+                 style="appearance: none;"
                  oninput="updateAllNoClamp()" 
                  onblur="clampQuantity()">
           <button class="qty-btn" onclick="adjustQuantity(1)">+</button>
@@ -431,7 +455,7 @@
   <script>
     /* ---------- CONFIG ---------- */
     const CONFIG = {
-      minLengthCm: 70, // Minimale 70 cm
+      minLengthCm: 40, // Minimale 40 cm
       maxWidth: 140,
       maxLength: 2000,
       basePricePerM2: 31.95,
@@ -453,9 +477,9 @@
     /* ---------- ELEMENTEN ---------- */
     const shapeRadios = document.querySelectorAll('input[name="shape"]');
     const rectInputs = document.getElementById('rectInputs');
+    const rectLabel = document.getElementById('rectLabel');
     const circleLabel = document.getElementById('circleLabel');
     const circleInput = document.getElementById('circleInput');
-    const rectLabel = document.getElementById('rectLabel');
 
     const widthInput = document.getElementById('width');
     const widthRange = document.getElementById('widthRange');
@@ -469,6 +493,7 @@
     const cornerRadiusRow = document.getElementById('cornerRadiusRow');
     const cornerRadiusInput = document.getElementById('cornerRadius');
     const cornerRadiusRange = document.getElementById('cornerRadiusRange');
+    const roundedCornersLine = document.getElementById('roundedCornersLine');
 
     const quantityInput = document.getElementById('quantity');
     const rectangleEl = document.getElementById('rectangle');
@@ -479,11 +504,10 @@
 
     /* ---------- INIT ---------- */
     function init() {
-      // Voeg eventlistener toe aan elke shape-radio, zodat vorm direct update
       shapeRadios.forEach(radio => {
         radio.addEventListener('change', updateAllNoClamp);
       });
-      updateAllNoClamp();
+      updateAllNoClamp(); // start
     }
     window.addEventListener('load', init);
     orderBtn.addEventListener('click', sendOrder);
@@ -515,14 +539,16 @@
         circleLabel.style.display = 'none';
         circleInput.style.display = 'none';
       }
-      // Afgeronde hoeken alleen bij rechthoek
+      // Alleen bij rechthoek "Afgeronde hoeken"
       if (shape === 'rectangle') {
+        roundedCornersLine.style.display = 'flex';
         if (roundedCornersCheck.checked) {
           cornerRadiusRow.style.display = 'block';
         } else {
           cornerRadiusRow.style.display = 'none';
         }
       } else {
+        roundedCornersLine.style.display = 'none';
         cornerRadiusRow.style.display = 'none';
       }
     }
@@ -601,6 +627,14 @@
     }
 
     // Aantal
+    function adjustQuantity(change) {
+      let val = parseInt(quantityInput.value) || 1;
+      val += change;
+      if (val < 1) val = 1;
+      if (val > 99) val = 99;
+      quantityInput.value = val;
+      updateAllNoClamp();
+    }
     function clampQuantity() {
       let val = parseInt(quantityInput.value) || 1;
       if (val < 1) val = 1;
@@ -624,7 +658,7 @@
       let qty = parseInt(quantityInput.value) || 1;
       const hasExtra = extraLengthCheck.checked;
 
-      // Preview dimension
+      // Display in preview
       let displayW, displayL;
       if (shape === 'circle') {
         displayW = hasExtra ? dVal * 1.01 : dVal;
@@ -726,7 +760,6 @@
       let qty = parseInt(quantityInput.value) || 1;
       const hasExtra = extraLengthCheck.checked;
 
-      // Bepaal bestelde breedte/lengte
       let orderW, orderL;
       if (shape === 'circle') {
         orderW = orderL = hasExtra ? Math.round(dVal * 1.01) : dVal;

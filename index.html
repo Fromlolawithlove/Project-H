@@ -416,3 +416,28 @@
   </script>
 </body>
 </html>
+
+<script>
+  // Functie om de hoogte van de pagina te meten en een RESIZE-bericht te sturen
+  function resizeIframe() {
+    // Meet de totale hoogte van de body; dit kan je aanpassen als je een specifiek element wilt meten
+    const newHeight = document.body.scrollHeight;
+    // Maak een bericht met de actie RESIZE en de gemeten hoogte
+    const message = {
+      action: 'RESIZE',
+      height: newHeight
+    };
+    // Verstuur het bericht naar de ouderpagina.
+    // In productie vervang '*' door de exacte URL van de parent, bijvoorbeeld 'https://www.hubo.be'
+    window.parent.postMessage(JSON.stringify(message), '*');
+  }
+
+  // Wanneer de pagina geladen is, roep resizeIframe() aan
+  window.addEventListener('load', resizeIframe);
+
+  // Als er wijzigingen in de invoervelden plaatsvinden, roep resizeIframe() ook aan
+  document.querySelectorAll('input').forEach(input => {
+    input.addEventListener('input', resizeIframe);
+  });
+</script>
+

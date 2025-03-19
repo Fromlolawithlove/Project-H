@@ -27,7 +27,7 @@
       gap: 20px;
     }
 
-    /* Linkerpaneel: productinfo, smaller (± 300px) op desktop */
+    /* Linkerpaneel: productinfo (± 300px) */
     .left-panel {
       flex: 0 0 300px;
       max-width: 300px;
@@ -128,13 +128,13 @@
     .shape-icon {
       width: 60px;
       height: 60px;
-      border: 2px solid #8ea4c8;
-      background: white;
       margin-bottom: 6px;
       display: flex;
       align-items: center;
       justify-content: center;
       transition: all 0.3s;
+      border: 2px solid #8ea4c8;
+      background: white;
     }
     .shape-option input[type="radio"]:checked + .shape-icon {
       background: #8ea4c8;
@@ -144,6 +144,26 @@
       font-size: 14px;
       color: #1e293b;
       text-align: center;
+    }
+
+    /* Specifieke vormiconen (voorbeeld) */
+    .rectangle-icon {
+      width: 50px; 
+      height: 35px;
+      border-radius: 0;
+    }
+    .circle-icon {
+      border-radius: 50%;
+    }
+    .ellipse-icon {
+      width: 35px; 
+      height: 50px;
+      border-radius: 50%;
+    }
+    .oval-icon {
+      width: 50px; 
+      height: 35px;
+      border-radius: 20px;
     }
 
     /* Slider-veld + fallback number */
@@ -194,6 +214,9 @@
     }
     .finishing-group .checkbox-line {
       margin-bottom: 10px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
     }
 
     /* Order-sectie */
@@ -267,18 +290,17 @@
 </head>
 <body>
   <div class="main-container">
-    <!-- Linkerpaneel -->
+    <!-- Linkerpaneel: productinfo -->
     <div class="left-panel">
       <img src="PLA2100.jpg" alt="Transparante tafelbeschermer">
       <h2>Transparante tafelbeschermer</h2>
       <p>
         Met deze doorzichtige PVC-mat van 2 mm dik behoud je de look van je tafel, 
-        terwijl je hem optimaal beschermt tegen stoten en vloeistoffen. 
+        terwijl je hem optimaal beschermt tegen stoten en vloeistoffen.
       </p>
       <p>
-        Let op: dit materiaal kan tot 1% krimpen. 
-        Niet aanbevolen voor hoogglans of glazen tafels, 
-        omdat er luchtbellen kunnen ontstaan.
+        Let op: dit materiaal kan tot 1% krimpen. Niet aanbevolen voor hoogglans 
+        of glazen tafels, omdat er luchtbellen kunnen ontstaan.
       </p>
     </div>
 
@@ -296,7 +318,7 @@
       <div class="section-title">Kies de vorm</div>
       <div class="shape-choices">
         <label class="shape-option">
-          <input type="radio" name="shape" value="rectangle" checked>
+          <input type="radio" name="shape" value="rectangle">
           <div class="shape-icon rectangle-icon"></div>
           <span class="shape-label">Rechthoek<br>+€0,00</span>
         </label>
@@ -317,16 +339,16 @@
         </label>
       </div>
 
-      <!-- Afmetingen (rechthoek/ellips/ovaal) -->
+      <!-- Breedte/Lengte (rechthoek/ellips/ovaal) -->
       <div class="section-title" id="rectLabel">Kies afmetingen</div>
       <div id="rectInputs">
         <div class="slider-group">
           <label>Breedte (cm)</label>
           <div class="slider-row">
-            <input type="range" id="widthRange" min="70" max="140" value="100" 
+            <input type="range" id="widthRange" min="70" max="140" value="100"
                    oninput="syncWidthFromSlider()" 
                    onblur="clampWidth()">
-            <input type="number" id="width" min="70" max="140" value="100" 
+            <input type="number" id="width" min="70" max="140" value="100"
                    oninput="syncWidthFromNumber()" 
                    onblur="clampWidth()">
           </div>
@@ -344,7 +366,7 @@
         </div>
       </div>
 
-      <!-- Cirkel (diameter) -->
+      <!-- Cirkel: Diameter -->
       <div class="section-title" id="circleLabel" style="display:none;">Kies diameter</div>
       <div id="circleInput" style="display:none;">
         <div class="slider-group">
@@ -365,12 +387,14 @@
       <div class="finishing-group">
         <div class="checkbox-line">
           <input type="checkbox" id="extraLength" style="width:18px; height:18px;"
-                 oninput="updateAllNoClamp()" onblur="updateAllNoClamp()">
-          <label for="extraLength">1% gratis lengte</label>
+                 oninput="updateAllNoClamp()" 
+                 onblur="updateAllNoClamp()">
+          <label for="extraLength">Ik wil graag 1% gratis lengte om de mogelijke krimp te compenseren.</label>
         </div>
         <div class="checkbox-line">
           <input type="checkbox" id="roundedCorners" style="width:18px; height:18px;"
-                 oninput="updateAllNoClamp()" onblur="updateAllNoClamp()">
+                 oninput="updateAllNoClamp()" 
+                 onblur="updateAllNoClamp()">
           <label for="roundedCorners">Afgeronde hoeken</label>
         </div>
         <div id="cornerRadiusRow" style="display:none; margin-top:10px;">
@@ -395,7 +419,8 @@
         <div class="quantity-control">
           <button class="qty-btn" onclick="adjustQuantity(-1)">-</button>
           <input type="number" id="quantity" value="1" min="1" max="99"
-                 oninput="updateAllNoClamp()" onblur="clampQuantity()">
+                 oninput="updateAllNoClamp()" 
+                 onblur="clampQuantity()">
           <button class="qty-btn" onclick="adjustQuantity(1)">+</button>
         </div>
         <button class="order-btn" id="orderBtn">Direct bestellen</button>
@@ -452,7 +477,18 @@
     const lengthLabel = document.getElementById('lengthLabel');
     const orderBtn = document.getElementById('orderBtn');
 
-    /* ---------- HELPER FUNCTIES ---------- */
+    /* ---------- INIT ---------- */
+    function init() {
+      // Voeg eventlistener toe aan elke shape-radio, zodat vorm direct update
+      shapeRadios.forEach(radio => {
+        radio.addEventListener('change', updateAllNoClamp);
+      });
+      updateAllNoClamp();
+    }
+    window.addEventListener('load', init);
+    orderBtn.addEventListener('click', sendOrder);
+
+    /* ---------- HELPER ---------- */
     function getSelectedShape() {
       let shape = 'rectangle';
       shapeRadios.forEach(r => {
@@ -465,7 +501,7 @@
       return Math.max(min, Math.min(val, max));
     }
 
-    /* ---------- VORM-UI LOGICA ---------- */
+    /* ---------- UI LOGICA ---------- */
     function updateVisibility() {
       const shape = getSelectedShape();
       if (shape === 'circle') {
@@ -491,7 +527,7 @@
       }
     }
 
-    /* ---------- SLIDER & NUMBER SYNC ---------- */
+    /* ---------- SLIDER <-> NUMBER SYNC ---------- */
     // Breedte
     function syncWidthFromSlider() {
       widthInput.value = widthRange.value;
@@ -573,33 +609,12 @@
       updateAllNoClamp();
     }
 
-    /* ---------- BEREKENINGEN & PREVIEW ---------- */
-    function calculatePrice(shape, wVal, lVal, dVal, hasExtra, qty) {
-      if (shape === 'circle') {
-        // Cirkel: π*(r^2)
-        const diameterCm = hasExtra ? dVal * 1.01 : dVal;
-        const radiusM = (diameterCm / 2) / 100;
-        const area = Math.PI * radiusM * radiusM;
-        let base = area * CONFIG.basePricePerM2;
-        let shapeSurcharge = CONFIG.shapeExtraPrice.circle || 0;
-        return (base + shapeSurcharge) * qty;
-      } else {
-        // Rechthoek/ellips/ovaal => 3-tier breedte
-        let effectiveW, rate;
-        if (wVal <= 100) {
-          effectiveW = 100; rate = CONFIG.priceTiers[100];
-        } else if (wVal <= 120) {
-          effectiveW = 120; rate = CONFIG.priceTiers[120];
-        } else {
-          effectiveW = 140; rate = CONFIG.priceTiers[140];
-        }
-        let lengthCm = hasExtra ? lVal * 1.01 : lVal;
-        const area = (effectiveW / 100) * (lengthCm / 100);
-        let shapeSurcharge = CONFIG.shapeExtraPrice[shape] || 0;
-        return (area * rate + shapeSurcharge) * qty;
-      }
+    /* ---------- BEREKENING & PREVIEW ---------- */
+    function updateAllNoClamp() {
+      updateVisibility();
+      calculateDimensions();
+      resizeIframe();
     }
-
     function calculateDimensions() {
       const shape = getSelectedShape();
 
@@ -609,7 +624,7 @@
       let qty = parseInt(quantityInput.value) || 1;
       const hasExtra = extraLengthCheck.checked;
 
-      // Display in preview
+      // Preview dimension
       let displayW, displayL;
       if (shape === 'circle') {
         displayW = hasExtra ? dVal * 1.01 : dVal;
@@ -626,9 +641,9 @@
       );
       const finalW = displayW * scale;
       const finalL = displayL * scale;
+
       applyShape(shape, finalW, finalL);
 
-      // Labels
       if (shape === 'circle') {
         widthLabel.textContent = `${Math.round(displayW)} cm`;
         lengthLabel.textContent = `${Math.round(displayW)} cm`;
@@ -667,12 +682,33 @@
       }
     }
 
-    /* ---------- UPDATE ---------- */
-    function updateAllNoClamp() {
-      updateVisibility();
-      calculateDimensions();
-      resizeIframe();
+    function calculatePrice(shape, wVal, lVal, dVal, hasExtra, qty) {
+      if (shape === 'circle') {
+        // Cirkel: π*(r^2)
+        const diameterCm = hasExtra ? dVal * 1.01 : dVal;
+        const radiusM = (diameterCm / 2) / 100;
+        const area = Math.PI * radiusM * radiusM;
+        let base = area * CONFIG.basePricePerM2;
+        let shapeSurcharge = CONFIG.shapeExtraPrice.circle || 0;
+        return (base + shapeSurcharge) * qty;
+      } else {
+        // Rechthoek/ellips/ovaal => 3-tier breedte
+        let effectiveW, rate;
+        if (wVal <= 100) {
+          effectiveW = 100; rate = CONFIG.priceTiers[100];
+        } else if (wVal <= 120) {
+          effectiveW = 120; rate = CONFIG.priceTiers[120];
+        } else {
+          effectiveW = 140; rate = CONFIG.priceTiers[140];
+        }
+        let lengthCm = hasExtra ? lVal * 1.01 : lVal;
+        const area = (effectiveW / 100) * (lengthCm / 100);
+        let shapeSurcharge = CONFIG.shapeExtraPrice[shape] || 0;
+        return (area * rate + shapeSurcharge) * qty;
+      }
     }
+
+    /* ---------- iFrame-resize ---------- */
     function resizeIframe() {
       const newHeight = document.body.scrollHeight;
       window.parent.postMessage(JSON.stringify({action: 'RESIZE', height: newHeight}), '*');
@@ -690,6 +726,7 @@
       let qty = parseInt(quantityInput.value) || 1;
       const hasExtra = extraLengthCheck.checked;
 
+      // Bepaal bestelde breedte/lengte
       let orderW, orderL;
       if (shape === 'circle') {
         orderW = orderL = hasExtra ? Math.round(dVal * 1.01) : dVal;
@@ -728,13 +765,6 @@
       window.parent.postMessage(JSON.stringify(orderMessage), '*');
       console.log("Verstuurd CHANGE_PRODUCT bericht:", orderMessage);
     }
-
-    /* INIT */
-    function init() {
-      updateAllNoClamp(); 
-    }
-    window.addEventListener('load', init);
-    orderBtn.addEventListener('click', sendOrder);
   </script>
 </body>
 </html>

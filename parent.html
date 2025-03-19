@@ -14,19 +14,25 @@
 </head>
 <body>
   <h1>Ouderpagina voor de Configurator</h1>
-  <!-- Vervang de src-URL door de URL van jouw configurator (index.html) -->
-  <iframe id="configuratorFrame" src="https://jouw-domein-of-github-username.github.io/Project-H/index.html" scrolling="no"></iframe>
+  
+  <!-- iFrame dat jouw configurator laadt -->
+  <iframe
+    id="configuratorFrame"
+    src="https://fromlolawithlove.github.io/Project-H/"
+    scrolling="no">
+  </iframe>
 
   <script>
     // Luister naar berichten van de iFrame (jouw configurator)
     window.addEventListener('message', function(event) {
       try {
-        // Voor deze test gebruiken we '*' als target origin. In productie gebruik je de exacte URL (bijv. 'https://www.hubo.be')
+        // Voor deze test gebruiken we '*' als target origin
+        // In productie gebruik je de exacte URL (bijv. 'https://www.hubo.be')
         const data = JSON.parse(event.data);
 
         if (data.action === 'RESIZE') {
           console.log("Ontvangen RESIZE bericht:", data);
-          // Pas de hoogte van de iFrame aan
+          // Pas de hoogte van het iFrame aan
           const iframe = document.getElementById('configuratorFrame');
           iframe.style.height = data.height + 'px';
         }

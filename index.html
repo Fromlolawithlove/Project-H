@@ -3,8 +3,9 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Doorzichtig tafelzeil 2mm </title>
+  <title>Transparant tafelzeil generator</title>
   <style>
+    /* Basisstijlen */
     body {
       font-family: Arial, sans-serif;
       margin: 0;
@@ -43,6 +44,7 @@
       gap: 30px;
       margin-bottom: 20px;
       justify-content: center;
+      flex-wrap: wrap; /* Als het niet past, breekt het naar de volgende regel */
     }
     .shape-option {
       display: flex;
@@ -257,15 +259,38 @@
     @media (max-width: 768px) {
       .container {
         flex-direction: column;
-        gap: 30px;
+        gap: 20px;
+        padding: 20px;
+      }
+      .config-section {
+        padding-right: 0;
       }
       .shape-choices {
         flex-direction: column;
         align-items: flex-start;
       }
+      .input-row {
+        flex-direction: column;
+        align-items: flex-start;
+      }
       .order-row {
         flex-direction: column;
-        align-items: stretch;
+        align-items: flex-start;
+        gap: 10px;
+      }
+      .preview-container {
+        width: 100%;
+        max-width: 350px;
+        margin: 0 auto;
+      }
+      .qty-btn {
+        width: 44px;
+        height: 44px;
+        font-size: 18px;
+      }
+      .order-btn {
+        width: 100%;
+        text-align: center;
       }
     }
   </style>
@@ -321,7 +346,6 @@
         </div>
       </div>
 
-      <!-- Diameter (alleen bij Cirkel) -->
       <div class="input-group" id="circleInput" style="display:none;">
         <label for="diameter">Diameter (in cm)</label>
         <div class="flex-row">
@@ -339,7 +363,7 @@
         </label>
       </div>
 
-      <!-- Afgeronde hoeken (en ronding) - alleen bij Rechthoek -->
+      <!-- Afgeronde hoeken (alleen bij Rechthoek) -->
       <div class="input-group" id="roundedCornersGroup" style="display:none;">
         <label style="display: flex; align-items: center; gap: 10px;">
           <input type="checkbox" id="roundedCorners" style="width: 20px; height: 20px;">
@@ -398,6 +422,7 @@
       previewHeight: 200
     };
 
+    // Elementen
     const shapeRadios = document.querySelectorAll('input[name="shape"]');
     const rectInputs = document.getElementById('rectInputs');
     const circleInputGroup = document.getElementById('circleInput');
@@ -415,7 +440,6 @@
     const cornerRadiusRow = document.getElementById('cornerRadiusRow');
     const cornerRadiusInput = document.getElementById('cornerRadius');
 
-    // Helpers
     function getSelectedShape() {
       let shape = 'rectangle';
       shapeRadios.forEach(r => {
@@ -428,22 +452,20 @@
       return Math.max(min, Math.min(val, max));
     }
 
-    // Toon/verberg velden op basis van vorm & checkbox
+    // Toon/verberg velden
     function updateVisibility() {
       let shape = getSelectedShape();
-
       if (shape === 'circle') {
         rectInputs.style.display = 'none';
         circleInputGroup.style.display = 'block';
         roundedCornersGroup.style.display = 'none';
       } else {
-        // Rechthoek / Ellips / Ovaal
+        // Rechthoek/Ellips/Ovaal
         rectInputs.style.display = 'flex';
         circleInputGroup.style.display = 'none';
-        // Afgeronde hoeken alleen bij Rechthoek
         if (shape === 'rectangle') {
           roundedCornersGroup.style.display = 'block';
-          // Als "Afgeronde hoeken" is aangevinkt, toon "Ronding (in cm)"
+          // Als "Afgeronde hoeken" aanstaat => ronding tonen
           if (roundedCornersCheck.checked) {
             cornerRadiusRow.style.display = 'block';
           } else {
@@ -469,22 +491,19 @@
       quantityInput.value = qty;
 
       let hasExtra = extraLengthCheck.checked;
+      let displayW = wVal, displayL = lVal;
 
-      let displayW = wVal;
-      let displayL = lVal;
-
-      // Cirkel => diameter
       if (shape === 'circle') {
         displayW = hasExtra ? dVal * 1.01 : dVal;
         displayL = displayW; // diameter
       } else {
-        // Rechthoek, Ellips, Ovaal => breedte en lengte
+        // Rechthoek, Ellips, Ovaal
         if (hasExtra) {
           displayL = lVal * 1.01;
         }
       }
 
-      // Schaal in preview
+      // Schaal
       const scale = Math.min(
         CONFIG.previewWidth / displayW,
         CONFIG.previewHeight / displayL
@@ -503,7 +522,7 @@
         lengthLabel.textContent = `${Math.round(displayL)} cm`;
       }
 
-      // Prijsberekening
+      // Prijs
       let baseW = (shape === 'circle') ? dVal : wVal;
       let baseL = (shape === 'circle') ? dVal : lVal;
       let baseArea = (baseW / 100) * (baseL / 100);
@@ -519,8 +538,6 @@
       if (shape === 'rectangle') {
         rectangleEl.style.width = w + 'px';
         rectangleEl.style.height = h + 'px';
-
-        // Afgeronde hoeken?
         if (roundedCornersCheck.checked) {
           let cornerVal = clamp(parseInt(cornerRadiusInput.value), 0, 100);
           rectangleEl.style.borderRadius = cornerVal + 'px';
@@ -544,7 +561,7 @@
       }
     }
 
-    // Event-handlers voor min/plus-knoppen
+    // Min/plus
     function adjustWidth(delta) {
       let val = parseInt(widthInput.value) + delta;
       widthInput.value = clamp(val, 1, CONFIG.maxWidth);
@@ -571,7 +588,6 @@
       updateAll();
     }
 
-    // Combinatie van visibility, berekening en resize
     function updateAll() {
       updateVisibility();
       calculateDimensions();
@@ -590,7 +606,6 @@
       updateAll();
     });
 
-    // Listeners
     document.querySelectorAll('input, select').forEach(el => {
       el.addEventListener('input', updateAll);
     });

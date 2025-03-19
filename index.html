@@ -39,6 +39,7 @@
     /* Vormkeuze (radio-knoppen) */
     .shape-choices {
       display: flex;
+      flex-direction: row;
       gap: 30px;
       margin-bottom: 20px;
       justify-content: center;
@@ -75,8 +76,8 @@
       text-align: center;
     }
 
-    /* Specifieke vorm-iconen (simpel) */
-    .rectangle-icon { /* border-radius: 0 */ }
+    /* Specifieke vorm-iconen */
+    .rectangle-icon { }
     .circle-icon {
       border-radius: 50%;
     }
@@ -88,17 +89,17 @@
     .oval-icon {
       width: 40px;
       height: 60px;
-      border-radius: 20px; /* “pill” vorm, verticaal */
+      border-radius: 20px;
     }
 
-    /* Inputs */
-    .input-group {
-      margin-bottom: 20px;
-    }
+    /* Invoer-groepen */
     .input-row {
       display: flex;
-      gap: 20px; /* naast elkaar */
+      gap: 20px;
       align-items: center;
+    }
+    .input-group {
+      margin-bottom: 20px;
     }
     .input-group label {
       display: block;
@@ -114,6 +115,7 @@
       border-radius: 8px;
       font-size: 14px;
       text-align: center;
+      transition: all 0.3s ease;
     }
     .input-group input[type="number"]:focus {
       border-color: #001D85;
@@ -257,14 +259,7 @@
         flex-direction: column;
         gap: 30px;
       }
-      .config-section {
-        padding-right: 0;
-      }
       .shape-choices {
-        flex-direction: column;
-        align-items: flex-start;
-      }
-      .input-row {
         flex-direction: column;
         align-items: flex-start;
       }
@@ -284,25 +279,21 @@
 
       <!-- Vormkeuze -->
       <div class="shape-choices">
-        <!-- Rechthoek -->
         <label class="shape-option">
           <input type="radio" name="shape" value="rectangle" checked>
           <div class="shape-icon rectangle-icon"></div>
           <span class="shape-label">Rechthoek<br>+€0,00</span>
         </label>
-        <!-- Cirkel -->
         <label class="shape-option">
           <input type="radio" name="shape" value="circle">
           <div class="shape-icon circle-icon"></div>
           <span class="shape-label">Cirkel<br>+€5,00</span>
         </label>
-        <!-- Ellips -->
         <label class="shape-option">
           <input type="radio" name="shape" value="ellipse">
           <div class="shape-icon ellipse-icon"></div>
           <span class="shape-label">Ellips<br>+€5,00</span>
         </label>
-        <!-- Ovaal -->
         <label class="shape-option">
           <input type="radio" name="shape" value="oval">
           <div class="shape-icon oval-icon"></div>
@@ -312,7 +303,7 @@
 
       <!-- Breedte/Lengte of Diameter -->
       <div class="input-row" id="rectInputs">
-        <div class="input-group" style="min-width:120px;">
+        <div class="input-group">
           <label for="width">Breedte (in cm)</label>
           <div class="flex-row">
             <button class="qty-btn" onclick="adjustWidth(-1)">-</button>
@@ -320,7 +311,7 @@
             <button class="qty-btn" onclick="adjustWidth(1)">+</button>
           </div>
         </div>
-        <div class="input-group" style="min-width:120px;">
+        <div class="input-group">
           <label for="length">Lengte (in cm)</label>
           <div class="flex-row">
             <button class="qty-btn" onclick="adjustLength(-1)">-</button>
@@ -330,7 +321,7 @@
         </div>
       </div>
 
-      <!-- Cirkel (diameter) -->
+      <!-- Diameter (alleen bij Cirkel) -->
       <div class="input-group" id="circleInput" style="display:none;">
         <label for="diameter">Diameter (in cm)</label>
         <div class="flex-row">
@@ -348,17 +339,19 @@
         </label>
       </div>
 
-      <!-- Afgeronde hoeken (alleen bij Rechthoek) -->
+      <!-- Afgeronde hoeken (en ronding) - alleen bij Rechthoek -->
       <div class="input-group" id="roundedCornersGroup" style="display:none;">
         <label style="display: flex; align-items: center; gap: 10px;">
           <input type="checkbox" id="roundedCorners" style="width: 20px; height: 20px;">
           Afgeronde hoeken
         </label>
-        <label for="cornerRadius" style="margin-top:10px;">Ronding (in cm)</label>
-        <div class="flex-row">
-          <button class="qty-btn" onclick="adjustCornerRadius(-1)">-</button>
-          <input type="number" id="cornerRadius" min="0" max="100" value="0">
-          <button class="qty-btn" onclick="adjustCornerRadius(1)">+</button>
+        <div id="cornerRadiusRow" style="display:none; margin-top:10px;">
+          <label for="cornerRadius">Ronding (in cm)</label>
+          <div class="flex-row">
+            <button class="qty-btn" onclick="adjustCornerRadius(-1)">-</button>
+            <input type="number" id="cornerRadius" min="0" max="100" value="0">
+            <button class="qty-btn" onclick="adjustCornerRadius(1)">+</button>
+          </div>
         </div>
       </div>
 
@@ -372,18 +365,15 @@
 
       <!-- Bestel-sectie -->
       <div class="order-row">
-        <!-- Prijsblok -->
         <div class="price-block">
           <span class="price-label">Totaalprijs</span>
           <span class="price-value" id="price">€31,95</span>
         </div>
-        <!-- Aantal stuks -->
         <div class="quantity-control">
           <button class="qty-btn" onclick="adjustQuantity(-1)">-</button>
           <input type="number" id="quantity" value="1" min="1" max="99">
           <button class="qty-btn" onclick="adjustQuantity(1)">+</button>
         </div>
-        <!-- Bestelknop -->
         <button class="order-btn">Direct bestellen</button>
       </div>
     </div>
@@ -422,30 +412,10 @@
     const lengthLabel = document.getElementById('lengthLabel');
     const roundedCornersGroup = document.getElementById('roundedCornersGroup');
     const roundedCornersCheck = document.getElementById('roundedCorners');
+    const cornerRadiusRow = document.getElementById('cornerRadiusRow');
     const cornerRadiusInput = document.getElementById('cornerRadius');
 
-    function updateVisibility() {
-      // Check welke vorm is geselecteerd
-      let shape = getSelectedShape();
-      if (shape === 'circle') {
-        // Verberg breedte/hoogte, toon diameter
-        rectInputs.style.display = 'none';
-        circleInputGroup.style.display = 'block';
-        // Geen afgeronde hoeken bij cirkel
-        roundedCornersGroup.style.display = 'none';
-      } else {
-        // Toon breedte/hoogte, verberg diameter
-        rectInputs.style.display = 'flex';
-        circleInputGroup.style.display = 'none';
-        // Bij Rechthoek => optie afgeronde hoeken
-        if (shape === 'rectangle') {
-          roundedCornersGroup.style.display = 'block';
-        } else {
-          roundedCornersGroup.style.display = 'none';
-        }
-      }
-    }
-
+    // Helpers
     function getSelectedShape() {
       let shape = 'rectangle';
       shapeRadios.forEach(r => {
@@ -453,29 +423,64 @@
       });
       return shape;
     }
+    function clamp(val, min, max) {
+      if (isNaN(val)) return min;
+      return Math.max(min, Math.min(val, max));
+    }
+
+    // Toon/verberg velden op basis van vorm & checkbox
+    function updateVisibility() {
+      let shape = getSelectedShape();
+
+      if (shape === 'circle') {
+        rectInputs.style.display = 'none';
+        circleInputGroup.style.display = 'block';
+        roundedCornersGroup.style.display = 'none';
+      } else {
+        // Rechthoek / Ellips / Ovaal
+        rectInputs.style.display = 'flex';
+        circleInputGroup.style.display = 'none';
+        // Afgeronde hoeken alleen bij Rechthoek
+        if (shape === 'rectangle') {
+          roundedCornersGroup.style.display = 'block';
+          // Als "Afgeronde hoeken" is aangevinkt, toon "Ronding (in cm)"
+          if (roundedCornersCheck.checked) {
+            cornerRadiusRow.style.display = 'block';
+          } else {
+            cornerRadiusRow.style.display = 'none';
+          }
+        } else {
+          roundedCornersGroup.style.display = 'none';
+        }
+      }
+    }
 
     function calculateDimensions() {
       let shape = getSelectedShape();
 
-      let widthVal = clamp(parseInt(widthInput.value), 1, CONFIG.maxWidth);
-      let lengthVal = clamp(parseInt(lengthInput.value), 1, CONFIG.maxLength);
-      let diameterVal = clamp(parseInt(diameterInput.value), 1, CONFIG.maxLength);
+      let wVal = clamp(parseInt(widthInput.value), 1, CONFIG.maxWidth);
+      let lVal = clamp(parseInt(lengthInput.value), 1, CONFIG.maxLength);
+      let dVal = clamp(parseInt(diameterInput.value), 1, CONFIG.maxLength);
       let qty = clamp(parseInt(quantityInput.value), 1, 99);
 
-      // +1% extra
-      const hasExtra = extraLengthCheck.checked;
-      
-      let displayW = widthVal;
-      let displayL = lengthVal;
+      widthInput.value = wVal;
+      lengthInput.value = lVal;
+      diameterInput.value = dVal;
+      quantityInput.value = qty;
 
+      let hasExtra = extraLengthCheck.checked;
+
+      let displayW = wVal;
+      let displayL = lVal;
+
+      // Cirkel => diameter
       if (shape === 'circle') {
-        // diameter
-        displayW = hasExtra ? diameterVal * 1.01 : diameterVal;
-        displayL = displayW; // cirkel => diameter = diameter
+        displayW = hasExtra ? dVal * 1.01 : dVal;
+        displayL = displayW; // diameter
       } else {
-        // Rechthoek, Ellips, Ovaal
+        // Rechthoek, Ellips, Ovaal => breedte en lengte
         if (hasExtra) {
-          displayL = lengthVal * 1.01;
+          displayL = lVal * 1.01;
         }
       }
 
@@ -498,14 +503,11 @@
         lengthLabel.textContent = `${Math.round(displayL)} cm`;
       }
 
-      // Prijs
-      // Basism2 (zonder +1% in de berekening)
-      let baseW = shape === 'circle' ? diameterVal : widthVal;
-      let baseL = shape === 'circle' ? diameterVal : lengthVal;
-      const baseArea = (baseW / 100) * (baseL / 100);
+      // Prijsberekening
+      let baseW = (shape === 'circle') ? dVal : wVal;
+      let baseL = (shape === 'circle') ? dVal : lVal;
+      let baseArea = (baseW / 100) * (baseL / 100);
       let basePrice = baseArea * CONFIG.basePricePerM2;
-
-      // Vormtoeslag
       let shapeExtra = CONFIG.shapeExtraPrice[shape] || 0;
       let total = (basePrice + shapeExtra) * qty;
 
@@ -513,22 +515,18 @@
     }
 
     function applyShape(shape, w, h) {
-      // Standaard border-radius 0
       rectangleEl.style.borderRadius = '0';
-      // Afgeronde hoeken?
-      let useRounded = (shape === 'rectangle') && roundedCornersCheck.checked;
-      let cornerVal = parseFloat(cornerRadiusInput.value) || 0;
-
       if (shape === 'rectangle') {
         rectangleEl.style.width = w + 'px';
         rectangleEl.style.height = h + 'px';
-        if (useRounded) {
-          // border-radius in px
+
+        // Afgeronde hoeken?
+        if (roundedCornersCheck.checked) {
+          let cornerVal = clamp(parseInt(cornerRadiusInput.value), 0, 100);
           rectangleEl.style.borderRadius = cornerVal + 'px';
         }
       }
       else if (shape === 'circle') {
-        // cirkel => w = h
         rectangleEl.style.width = w + 'px';
         rectangleEl.style.height = w + 'px';
         rectangleEl.style.borderRadius = '50%';
@@ -541,73 +539,43 @@
       else if (shape === 'oval') {
         rectangleEl.style.width = w + 'px';
         rectangleEl.style.height = h + 'px';
-        // vertical pill
         let radius = Math.min(w/2, h/2);
         rectangleEl.style.borderRadius = radius + 'px';
       }
     }
 
-    // Helpers
-    function clamp(val, min, max) {
-      if (isNaN(val)) return min;
-      return Math.max(min, Math.min(val, max));
-    }
-
-    // Breedte
+    // Event-handlers voor min/plus-knoppen
     function adjustWidth(delta) {
       let val = parseInt(widthInput.value) + delta;
       widthInput.value = clamp(val, 1, CONFIG.maxWidth);
       updateAll();
     }
-    // Lengte
     function adjustLength(delta) {
       let val = parseInt(lengthInput.value) + delta;
       lengthInput.value = clamp(val, 1, CONFIG.maxLength);
       updateAll();
     }
-    // Diameter
     function adjustDiameter(delta) {
       let val = parseInt(diameterInput.value) + delta;
       diameterInput.value = clamp(val, 1, CONFIG.maxLength);
       updateAll();
     }
-    // Aantal
     function adjustQuantity(delta) {
       let val = parseInt(quantityInput.value) + delta;
       quantityInput.value = clamp(val, 1, 99);
       updateAll();
     }
-    // Corner radius
     function adjustCornerRadius(delta) {
       let val = parseInt(cornerRadiusInput.value) + delta;
       cornerRadiusInput.value = clamp(val, 0, 100);
       updateAll();
     }
 
-    // Update UI en resize
+    // Combinatie van visibility, berekening en resize
     function updateAll() {
       updateVisibility();
       calculateDimensions();
       resizeIframe();
-    }
-
-    // Vorm-afhankelijke velden tonen/verbergen
-    function updateVisibility() {
-      let shape = getSelectedShape();
-      if (shape === 'circle') {
-        rectInputs.style.display = 'none';
-        circleInputGroup.style.display = 'block';
-        roundedCornersGroup.style.display = 'none';
-      } else {
-        rectInputs.style.display = 'flex';
-        circleInputGroup.style.display = 'none';
-        // Alleen bij Rechthoek tonen we de "afgeronde hoeken"
-        if (shape === 'rectangle') {
-          roundedCornersGroup.style.display = 'block';
-        } else {
-          roundedCornersGroup.style.display = 'none';
-        }
-      }
     }
 
     // iFrame-resize
@@ -622,7 +590,7 @@
       updateAll();
     });
 
-    // Eventlisteners
+    // Listeners
     document.querySelectorAll('input, select').forEach(el => {
       el.addEventListener('input', updateAll);
     });

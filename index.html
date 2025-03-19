@@ -119,6 +119,8 @@
     }
     .shape-option {
       display: flex;
+     
+<!-- Vervolg van de code... (vervolg op de shape-choices) -->
       flex-direction: column;
       align-items: center;
       cursor: pointer;
@@ -128,8 +130,8 @@
       display: none;
     }
     .shape-icon {
-      width: 60px;
-      height: 60px;
+      width: 30px; 
+      height: 50px;
       margin-bottom: 6px;
       display: flex;
       align-items: center;
@@ -148,24 +150,26 @@
       text-align: center;
     }
 
-    /* Voorbeeldiconen */
-    .rectangle-icon {
-      width: 50px; 
-      height: 35px;
+    /* Verticale vormiconen */
+    .rectangle-icon { /* Rechthoek: 30×50, geen border-radius */
+      width: 30px;
+      height: 50px;
       border-radius: 0;
     }
-    .circle-icon {
+    .circle-icon { /* Cirkel: 40×40, border-radius: 50% */
+      width: 40px;
+      height: 40px;
       border-radius: 50%;
     }
-    .ellipse-icon {
-      width: 35px; 
+    .ellipse-icon { /* Ellips: 30×50, border-radius: 50% */
+      width: 30px;
       height: 50px;
       border-radius: 50%;
     }
-    .oval-icon {
-      width: 50px; 
-      height: 35px;
-      border-radius: 20px;
+    .oval-icon { /* Ovaal/pill: 30×50, border-radius: half */
+      width: 30px;
+      height: 50px;
+      border-radius: 15px;
     }
 
     /* Slider-veld + fallback number */
@@ -219,6 +223,12 @@
       display: flex;
       align-items: center;
       gap: 8px;
+    }
+    /* Illustratie voor afgeronde hoeken */
+    #roundedCornersIllustration {
+      display: none; 
+      width: 80px; 
+      margin-top: 10px;
     }
 
     /* + & - knoppen groter */
@@ -430,6 +440,8 @@
                    oninput="syncCornerRadiusFromNumber()" 
                    onblur="clampCornerRadius()">
           </div>
+          <!-- Illustratie bij afgeronde hoeken -->
+          <img id="roundedCornersIllustration" src="rounded-corner-expl.png" alt="Afgeronde hoeken illustratie">
         </div>
       </div>
 
@@ -455,7 +467,9 @@
   <script>
     /* ---------- CONFIG ---------- */
     const CONFIG = {
-      minLengthCm: 40, // Minimale 40 cm
+      minRectEllipseOval: 50,   // Minimale 50 cm voor ellips & ovaal
+      minCircle: 40,           // Minimale 40 cm voor cirkel
+      minRect: 40,             // Minimale 40 cm voor rechthoek
       maxWidth: 140,
       maxLength: 2000,
       basePricePerM2: 31.95,
@@ -489,11 +503,12 @@
     const diameterRange = document.getElementById('diameterRange');
 
     const extraLengthCheck = document.getElementById('extraLength');
+    const roundedCornersLine = document.getElementById('roundedCornersLine');
     const roundedCornersCheck = document.getElementById('roundedCorners');
     const cornerRadiusRow = document.getElementById('cornerRadiusRow');
     const cornerRadiusInput = document.getElementById('cornerRadius');
     const cornerRadiusRange = document.getElementById('cornerRadiusRange');
-    const roundedCornersLine = document.getElementById('roundedCornersLine');
+    const roundedCornersIllustration = document.getElementById('roundedCornersIllustration');
 
     const quantityInput = document.getElementById('quantity');
     const rectangleEl = document.getElementById('rectangle');
@@ -520,9 +535,17 @@
       });
       return shape;
     }
+
     function clamp(val, min, max) {
       if (isNaN(val)) return min;
       return Math.max(min, Math.min(val, max));
+    }
+
+    function getMinValueForShape() {
+      const shape = getSelectedShape();
+      if (shape === 'circle') return CONFIG.minCircle;
+      if (shape === 'ellipse' || shape === 'oval') return CONFIG.minRectEllipseOval;
+      return CONFIG.minRect; // rectangle
     }
 
     /* ---------- UI LOGICA ---------- */
@@ -544,12 +567,15 @@
         roundedCornersLine.style.display = 'flex';
         if (roundedCornersCheck.checked) {
           cornerRadiusRow.style.display = 'block';
+          roundedCornersIllustration.style.display = 'block';
         } else {
           cornerRadiusRow.style.display = 'none';
+          roundedCornersIllustration.style.display = 'none';
         }
       } else {
         roundedCornersLine.style.display = 'none';
         cornerRadiusRow.style.display = 'none';
+        roundedCornersIllustration.style.display = 'none';
       }
     }
 
@@ -564,8 +590,9 @@
       updateAllNoClamp();
     }
     function clampWidth() {
-      let val = parseFloat(widthInput.value) || CONFIG.minLengthCm;
-      if (val < CONFIG.minLengthCm) val = CONFIG.minLengthCm;
+      const minVal = getMinValueForShape(); // dynamisch min
+      let val = parseFloat(widthInput.value) || minVal;
+      if (val < minVal) val = minVal;
       if (val > CONFIG.maxWidth) val = CONFIG.maxWidth;
       widthInput.value = Math.round(val);
       widthRange.value = widthInput.value;
@@ -582,8 +609,9 @@
       updateAllNoClamp();
     }
     function clampLength() {
-      let val = parseFloat(lengthInput.value) || CONFIG.minLengthCm;
-      if (val < CONFIG.minLengthCm) val = CONFIG.minLengthCm;
+      const minVal = getMinValueForShape(); 
+      let val = parseFloat(lengthInput.value) || minVal;
+      if (val < minVal) val = minVal;
       if (val > CONFIG.maxLength) val = CONFIG.maxLength;
       lengthInput.value = Math.round(val);
       lengthRange.value = lengthInput.value;
@@ -600,8 +628,9 @@
       updateAllNoClamp();
     }
     function clampDiameter() {
-      let val = parseFloat(diameterInput.value) || CONFIG.minLengthCm;
-      if (val < CONFIG.minLengthCm) val = CONFIG.minLengthCm;
+      const minVal = CONFIG.minCircle; // cirkel min 40
+      let val = parseFloat(diameterInput.value) || minVal;
+      if (val < minVal) val = minVal;
       if (val > CONFIG.maxLength) val = CONFIG.maxLength;
       diameterInput.value = Math.round(val);
       diameterRange.value = diameterInput.value;
@@ -652,9 +681,9 @@
     function calculateDimensions() {
       const shape = getSelectedShape();
 
-      let wVal = parseFloat(widthInput.value) || CONFIG.minLengthCm;
-      let lVal = parseFloat(lengthInput.value) || CONFIG.minLengthCm;
-      let dVal = parseFloat(diameterInput.value) || CONFIG.minLengthCm;
+      let wVal = parseFloat(widthInput.value) || getMinValueForShape();
+      let lVal = parseFloat(lengthInput.value) || getMinValueForShape();
+      let dVal = parseFloat(diameterInput.value) || CONFIG.minCircle;
       let qty = parseInt(quantityInput.value) || 1;
       const hasExtra = extraLengthCheck.checked;
 
@@ -754,9 +783,9 @@
 
     function sendOrder() {
       const shape = getSelectedShape();
-      let wVal = parseFloat(widthInput.value) || CONFIG.minLengthCm;
-      let lVal = parseFloat(lengthInput.value) || CONFIG.minLengthCm;
-      let dVal = parseFloat(diameterInput.value) || CONFIG.minLengthCm;
+      let wVal = parseFloat(widthInput.value) || getMinValueForShape();
+      let lVal = parseFloat(lengthInput.value) || getMinValueForShape();
+      let dVal = parseFloat(diameterInput.value) || CONFIG.minCircle;
       let qty = parseInt(quantityInput.value) || 1;
       const hasExtra = extraLengthCheck.checked;
 

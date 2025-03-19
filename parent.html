@@ -5,6 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Test Parent Pagina</title>
   <style>
+    /* iFrame vult de breedte van de pagina */
     iframe {
       width: 100%;
       border: 1px solid #ccc;
@@ -13,15 +14,16 @@
 </head>
 <body>
   <h1>Ouderpagina voor de Configurator</h1>
-  <!-- Vervang de src-URL door de URL van jouw configurator -->
-  <iframe id="configuratorFrame" src="https://fromlolawithlove.github.io/Project-H/" scrolling="no"></iframe>
+  <!-- Vervang de src-URL door de URL van jouw configurator (index.html) -->
+  <iframe id="configuratorFrame" src="https://jouw-domein-of-github-username.github.io/Project-H/index.html" scrolling="no"></iframe>
 
   <script>
     // Luister naar berichten van de iFrame (jouw configurator)
     window.addEventListener('message', function(event) {
-      // Voor deze test gebruiken we '*' als target origin, maar in productie gebruik je de exacte URL
       try {
+        // Voor deze test gebruiken we '*' als target origin. In productie gebruik je de exacte URL (bijv. 'https://www.hubo.be')
         const data = JSON.parse(event.data);
+
         if (data.action === 'RESIZE') {
           console.log("Ontvangen RESIZE bericht:", data);
           // Pas de hoogte van de iFrame aan
@@ -29,10 +31,9 @@
           iframe.style.height = data.height + 'px';
         }
       } catch (e) {
-        console.error("Ongeldig bericht ontvangen", e);
+        console.error("Ongeldig bericht ontvangen of andere fout:", e);
       }
     });
   </script>
 </body>
 </html>
-

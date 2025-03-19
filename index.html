@@ -82,7 +82,7 @@
       outline: none;
     }
     
-    /* Min/plus-knoppen: blauwe achtergrond en witte tekst */
+    /* Min/plus-knoppen */
     .qty-btn {
       width: 40px;
       height: 40px;
@@ -110,7 +110,7 @@
       border: 2px solid #e2e8f0;
     }
     #rectangle {
-      background-color: #3b82f6; /* Vaste blauwe kleur */
+      background-color: #3b82f6; 
       border: 2px solid #3b82f6;
       position: absolute;
       top: 50%;
@@ -184,7 +184,6 @@
       border-radius: 8px;
     }
     
-    /* Bestelknop - blauw */
     .order-btn {
       padding: 14px 24px;
       background: #3b82f6;
@@ -256,6 +255,16 @@
         <h1>Doorzichtig tafelzeil 2mm</h1>
         <div class="subtitle">(max. 140cm breed)</div>
       </div>
+
+      <!-- Vormkeuze -->
+      <div class="input-group">
+        <label for="shapeSelect">Gewenste vorm</label>
+        <select id="shapeSelect">
+          <option value="rectangle">Rechthoek</option>
+          <option value="circle">Cirkel</option>
+          <option value="ellipse">Ellips/Ovaal</option>
+        </select>
+      </div>
       
       <!-- Breedte en Lengte naast elkaar -->
       <div class="dimensions-row">
@@ -311,7 +320,7 @@
           <button class="qty-btn" onclick="adjustQuantity(1)">+</button>
         </div>
         <!-- Bestelknop -->
-        <button class="order-btn">Direct bestellen</button>
+        <button class="order-btn" id="orderBtn">Direct bestellen</button>
       </div>
     </div>
     
@@ -330,6 +339,7 @@
     };
     
     const elements = {
+      shapeSelect: document.getElementById('shapeSelect'),
       width: document.getElementById('width'),
       length: document.getElementById('length'),
       rectangle: document.getElementById('rectangle'),
@@ -337,42 +347,70 @@
       widthLabel: document.getElementById('widthLabel'),
       lengthLabel: document.getElementById('lengthLabel')
     };
-    
+
     function calculateDimensions() {
-      // Lees en corrigeer de invoer
+      // Lees invoer
       let widthVal = Math.min(CONFIG.maxWidth, Math.max(1, parseInt(elements.width.value)));
       let lengthVal = Math.min(CONFIG.maxLength, Math.max(1, parseInt(elements.length.value)));
       const hasExtra = document.getElementById('extraLength').checked;
       const quantity = parseInt(document.getElementById('quantity').value) || 1;
-      
-      // Zet invoervelden indien buiten limiet
+
+      // Corrigeer invoervelden indien buiten limiet
       elements.width.value = widthVal;
       elements.length.value = lengthVal;
-      
-      // +1% gratis visueel toepassen
+
+      // +1% gratis visueel toepassen (alleen in preview)
       const displayW = hasExtra ? widthVal * 1.01 : widthVal;
       const displayL = hasExtra ? lengthVal * 1.01 : lengthVal;
-      
-      // Bepaal één schaalfactor, zodat de ratio klopt
+
+      // Schaalfactor zodat de vorm in de preview past
       const scale = Math.min(
         CONFIG.previewWidth / displayW,
         CONFIG.previewHeight / displayL
       );
-      
-      // Pas afmetingen toe
-      elements.rectangle.style.width = (displayW * scale) + 'px';
-      elements.rectangle.style.height = (displayL * scale) + 'px';
-      
+
+      // Bepaal de uiteindelijke px-waarden in de preview
+      const finalW = displayW * scale;
+      const finalL = displayL * scale;
+
+      // Pas de vorm toe
+      applyShape(finalW, finalL);
+
       // Update labels
       elements.widthLabel.textContent = `${Math.round(displayW)} cm`;
       elements.lengthLabel.textContent = `${Math.round(displayL)} cm`;
-      
+
       // Prijsberekening (zonder extra 1%)
       const price = ((widthVal / 100) * (lengthVal / 100) * CONFIG.pricePerM2 * quantity).toFixed(2);
       elements.price.textContent = `€${price}`;
     }
-    
-    // Breedte aanpassen
+
+    // Pas de vorm (rechthoek/cirkel/ellips) toe in de preview
+    function applyShape(finalW, finalL) {
+      const shape = elements.shapeSelect.value; // "rectangle", "circle", "ellipse"
+
+      if (shape === 'rectangle') {
+        // Rechthoek
+        elements.rectangle.style.borderRadius = '0';
+        elements.rectangle.style.width = finalW + 'px';
+        elements.rectangle.style.height = finalL + 'px';
+      }
+      else if (shape === 'circle') {
+        // Cirkel = diameter = min(width, height)
+        const diameter = Math.min(finalW, finalL);
+        elements.rectangle.style.width = diameter + 'px';
+        elements.rectangle.style.height = diameter + 'px';
+        elements.rectangle.style.borderRadius = '50%';
+      }
+      else if (shape === 'ellipse') {
+        // Ellips/Ovaal: width en height blijven apart, maar borderRadius=50%
+        elements.rectangle.style.width = finalW + 'px';
+        elements.rectangle.style.height = finalL + 'px';
+        elements.rectangle.style.borderRadius = '50%';
+      }
+    }
+
+    // Breedte aanpassen via knoppen
     function adjustWidth(change) {
       const input = elements.width;
       let newVal = parseInt(input.value) + change;
@@ -381,8 +419,8 @@
       input.value = newVal;
       calculateDimensions();
     }
-    
-    // Lengte aanpassen
+
+    // Lengte aanpassen via knoppen
     function adjustLength(change) {
       const input = elements.length;
       let newVal = parseInt(input.value) + change;
@@ -391,8 +429,8 @@
       input.value = newVal;
       calculateDimensions();
     }
-    
-    // Aantal aanpassen
+
+    // Aantal stuks aanpassen
     function adjustQuantity(change) {
       const input = document.getElementById('quantity');
       let newVal = parseInt(input.value) + change;
@@ -401,17 +439,18 @@
       input.value = newVal;
       calculateDimensions();
     }
-    
+
     // Event listeners
     elements.width.addEventListener('input', calculateDimensions);
     elements.length.addEventListener('input', calculateDimensions);
     document.getElementById('extraLength').addEventListener('change', calculateDimensions);
     document.getElementById('quantity').addEventListener('input', calculateDimensions);
-    
+    elements.shapeSelect.addEventListener('change', calculateDimensions);
+
     // Init
     calculateDimensions();
   </script>
-  
+
   <!-- PostMessage-script voor iFrame-communicatie (Child/Configurator) -->
   <script>
     // Functie om de hoogte van de pagina te meten en een RESIZE-bericht te sturen
@@ -421,16 +460,24 @@
         action: 'RESIZE',
         height: newHeight
       };
-      // In productie vervang '*' door de exacte URL van de parent, bijvoorbeeld 'https://www.hubo.be'
+      // In productie vervang '*' door de exacte URL van de parent, bv. 'https://www.hubo.be'
       window.parent.postMessage(JSON.stringify(message), '*');
     }
     
-    // Roep resizeIframe() aan bij het laden van de pagina
-    window.addEventListener('load', resizeIframe);
+    // Bij laden van de pagina
+    window.addEventListener('load', () => {
+      calculateDimensions(); // Bereken direct
+      resizeIframe();        // Stuur direct een RESIZE
+    });
     
-    // Roep resizeIframe() aan bij elke input-verandering
-    document.querySelectorAll('input').forEach(input => {
-      input.addEventListener('input', resizeIframe);
+    // Elke keer dat de inhoud verandert (inputs etc.), roep resizeIframe() aan
+    document.querySelectorAll('input, select').forEach(el => {
+      el.addEventListener('input', () => {
+        // Pas eerst de afmetingen en vorm aan
+        calculateDimensions();
+        // Daarna stuur je een RESIZE-bericht
+        resizeIframe();
+      });
     });
   </script>
 </body>

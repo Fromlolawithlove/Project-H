@@ -99,6 +99,56 @@
       color: white;
     }
     
+    /* VORM-OPTIES (radio buttons) */
+    .shape-choices {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+    }
+    .shape-option {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+    }
+    .shape-option input[type="radio"] {
+      display: none; /* verberg de echte radio-knop */
+    }
+    .shape-icon {
+      width: 70px;
+      height: 70px;
+      border: 2px solid #8ea4c8; /* Lichtblauwe rand */
+      border-radius: 0;
+      margin-bottom: 8px;
+      background-color: white;
+      transition: background-color 0.3s, border-color 0.3s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .shape-label {
+      font-size: 14px;
+      color: #1e293b;
+      text-align: center;
+    }
+    /* Vormspecifiek */
+    .rectangle-icon { /* border-radius: 0; (standaard) */ }
+    .circle-icon {
+      border-radius: 50%;
+    }
+    .ellipse-icon {
+      border-radius: 50% / 35%;
+    }
+    .oval-icon {
+      border-radius: 50% / 45%;
+    }
+    /* Highlight bij selectie */
+    .shape-option input[type="radio"]:checked + .shape-icon {
+      background-color: #8ea4c8;
+      border-color: #5a7eb8;
+    }
+
     /* Preview-container */
     .preview-container {
       position: relative;
@@ -256,14 +306,32 @@
         <div class="subtitle">(max. 140cm breed)</div>
       </div>
 
-      <!-- Vormkeuze -->
-      <div class="input-group">
-        <label for="shapeSelect">Gewenste vorm</label>
-        <select id="shapeSelect">
-          <option value="rectangle">Rechthoek</option>
-          <option value="circle">Cirkel</option>
-          <option value="ellipse">Ellips/Ovaal</option>
-        </select>
+      <!-- VORM-OPTIES (radio buttons) -->
+      <div class="shape-choices">
+        <!-- Rechthoek -->
+        <label class="shape-option">
+          <input type="radio" name="shape" value="rectangle" checked>
+          <div class="shape-icon rectangle-icon"></div>
+          <span class="shape-label">Rechthoek</span>
+        </label>
+        <!-- Cirkel -->
+        <label class="shape-option">
+          <input type="radio" name="shape" value="circle">
+          <div class="shape-icon circle-icon"></div>
+          <span class="shape-label">Cirkel</span>
+        </label>
+        <!-- Ellips -->
+        <label class="shape-option">
+          <input type="radio" name="shape" value="ellipse">
+          <div class="shape-icon ellipse-icon"></div>
+          <span class="shape-label">Ellips</span>
+        </label>
+        <!-- Ovaal -->
+        <label class="shape-option">
+          <input type="radio" name="shape" value="oval">
+          <div class="shape-icon oval-icon"></div>
+          <span class="shape-label">Ovaal</span>
+        </label>
       </div>
       
       <!-- Breedte en Lengte naast elkaar -->
@@ -320,7 +388,7 @@
           <button class="qty-btn" onclick="adjustQuantity(1)">+</button>
         </div>
         <!-- Bestelknop -->
-        <button class="order-btn" id="orderBtn">Direct bestellen</button>
+        <button class="order-btn">Direct bestellen</button>
       </div>
     </div>
     
@@ -333,13 +401,13 @@
     const CONFIG = {
       maxWidth: 140,
       maxLength: 2000,
-      pricePerM2: 33.95,
+      pricePerM2: 31.95,
       previewWidth: 250,  // maximale breedte preview-container
       previewHeight: 200  // maximale hoogte preview-container
     };
     
     const elements = {
-      shapeSelect: document.getElementById('shapeSelect'),
+      shapeRadios: document.querySelectorAll('input[name="shape"]'),
       width: document.getElementById('width'),
       length: document.getElementById('length'),
       rectangle: document.getElementById('rectangle'),
@@ -355,7 +423,7 @@
       const hasExtra = document.getElementById('extraLength').checked;
       const quantity = parseInt(document.getElementById('quantity').value) || 1;
 
-      // Corrigeer invoervelden indien buiten limiet
+      // Corrigeer invoervelden
       elements.width.value = widthVal;
       elements.length.value = lengthVal;
 
@@ -369,26 +437,30 @@
         CONFIG.previewHeight / displayL
       );
 
-      // Bepaal de uiteindelijke px-waarden in de preview
+      // Echte pixelwaardes in de preview
       const finalW = displayW * scale;
       const finalL = displayL * scale;
 
-      // Pas de vorm toe
-      applyShape(finalW, finalL);
+      // Welke vorm is geselecteerd?
+      let shape = 'rectangle';
+      elements.shapeRadios.forEach(radio => {
+        if (radio.checked) shape = radio.value;
+      });
+
+      applyShape(shape, finalW, finalL);
 
       // Update labels
       elements.widthLabel.textContent = `${Math.round(displayW)} cm`;
       elements.lengthLabel.textContent = `${Math.round(displayL)} cm`;
 
       // Prijsberekening (zonder extra 1%)
+      // (pas evt. de logica aan als vormen extra kosten hebben)
       const price = ((widthVal / 100) * (lengthVal / 100) * CONFIG.pricePerM2 * quantity).toFixed(2);
       elements.price.textContent = `€${price}`;
     }
 
-    // Pas de vorm (rechthoek/cirkel/ellips) toe in de preview
-    function applyShape(finalW, finalL) {
-      const shape = elements.shapeSelect.value; // "rectangle", "circle", "ellipse"
-
+    // Pas de vorm toe in de preview
+    function applyShape(shape, finalW, finalL) {
       if (shape === 'rectangle') {
         // Rechthoek
         elements.rectangle.style.borderRadius = '0';
@@ -396,17 +468,23 @@
         elements.rectangle.style.height = finalL + 'px';
       }
       else if (shape === 'circle') {
-        // Cirkel = diameter = min(width, height)
+        // Cirkel => diameter = min(width, height)
         const diameter = Math.min(finalW, finalL);
         elements.rectangle.style.width = diameter + 'px';
         elements.rectangle.style.height = diameter + 'px';
         elements.rectangle.style.borderRadius = '50%';
       }
       else if (shape === 'ellipse') {
-        // Ellips/Ovaal: width en height blijven apart, maar borderRadius=50%
+        // Ellips
         elements.rectangle.style.width = finalW + 'px';
         elements.rectangle.style.height = finalL + 'px';
         elements.rectangle.style.borderRadius = '50%';
+      }
+      else if (shape === 'oval') {
+        // Ovaal => iets andere verhoudingen dan ellipse, maar technisch hetzelfde
+        elements.rectangle.style.width = finalW + 'px';
+        elements.rectangle.style.height = finalL + 'px';
+        elements.rectangle.style.borderRadius = '50% / 45%';
       }
     }
 
@@ -430,7 +508,7 @@
       calculateDimensions();
     }
 
-    // Aantal stuks aanpassen
+    // Aantal aanpassen
     function adjustQuantity(change) {
       const input = document.getElementById('quantity');
       let newVal = parseInt(input.value) + change;
@@ -440,42 +518,34 @@
       calculateDimensions();
     }
 
-    // Event listeners
-    elements.width.addEventListener('input', calculateDimensions);
-    elements.length.addEventListener('input', calculateDimensions);
-    document.getElementById('extraLength').addEventListener('change', calculateDimensions);
-    document.getElementById('quantity').addEventListener('input', calculateDimensions);
-    elements.shapeSelect.addEventListener('change', calculateDimensions);
+    // Init + eventlisteners
+    window.addEventListener('load', calculateDimensions);
+    document.querySelectorAll('input').forEach(el => {
+      el.addEventListener('input', calculateDimensions);
+    });
 
-    // Init
-    calculateDimensions();
   </script>
 
   <!-- PostMessage-script voor iFrame-communicatie (Child/Configurator) -->
   <script>
-    // Functie om de hoogte van de pagina te meten en een RESIZE-bericht te sturen
     function resizeIframe() {
       const newHeight = document.body.scrollHeight;
       const message = {
         action: 'RESIZE',
         height: newHeight
       };
-      // In productie vervang '*' door de exacte URL van de parent, bv. 'https://www.hubo.be'
       window.parent.postMessage(JSON.stringify(message), '*');
     }
     
-    // Bij laden van de pagina
+    // Na elke wijziging en na het laden => resize
     window.addEventListener('load', () => {
-      calculateDimensions(); // Bereken direct
-      resizeIframe();        // Stuur direct een RESIZE
+      calculateDimensions(); // Bereken meteen de afmetingen
+      resizeIframe();        
     });
-    
-    // Elke keer dat de inhoud verandert (inputs etc.), roep resizeIframe() aan
+
     document.querySelectorAll('input, select').forEach(el => {
       el.addEventListener('input', () => {
-        // Pas eerst de afmetingen en vorm aan
         calculateDimensions();
-        // Daarna stuur je een RESIZE-bericht
         resizeIframe();
       });
     });

@@ -1,13 +1,12 @@
 <!DOCTYPE html>
 <html lang="nl">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
-  <title>Doorzichtig tafelzeil 2mm - Configurator</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Vormen Configurator - Voorbeeld</title>
   <style>
-    /* Basisstijlen */
     body {
-      font-family: 'Arial', sans-serif;
+      font-family: Arial, sans-serif;
       margin: 0;
       padding: 20px;
       background-color: #f8fafc;
@@ -41,70 +40,17 @@
       min-width: 320px;
       padding-right: 30px;
     }
-    
-    /* Input-groepen */
-    .input-group {
-      margin-bottom: 25px;
-    }
-    .input-group label {
-      display: block;
-      margin-bottom: 10px;
-      color: #334155;
-      font-weight: 600;
-      font-size: 15px;
-    }
-    
-    /* Flexcontainer voor breedte en lengte */
-    .dimensions-row {
-      display: flex;
-      gap: 20px;
-      align-items: flex-start;
-    }
-    .flex-row {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-    
-    /* Standaard inputstijl */
-    .input-group input[type="number"] {
-      width: 80px;
-      padding: 12px 15px;
-      border: 2px solid #cbd5e1;
-      border-radius: 8px;
-      font-size: 16px;
-      transition: all 0.3s ease;
-      text-align: center;
-    }
-    .input-group input[type="number"]:focus {
-      border-color: #3b82f6;
-      box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.15);
-      outline: none;
-    }
-    
-    /* Min/plus-knoppen */
-    .qty-btn {
-      width: 40px;
-      height: 40px;
-      border: 2px solid #3b82f6;
-      background: #3b82f6;
-      color: white;
-      border-radius: 8px;
-      font-size: 20px;
-      cursor: pointer;
-      transition: all 0.2s;
-    }
-    .qty-btn:hover {
-      background: #00155F;
-      color: white;
-    }
-    
-    /* VORM-OPTIES (radio buttons) */
+
+    /* Vormkeuze-container */
     .shape-choices {
       display: flex;
-      gap: 20px;
+      flex-direction: row; /* horizontaal */
+      gap: 40px;
       margin-bottom: 20px;
+      justify-content: center;
     }
+
+    /* Elke vormoptie is een label + verborgen radio + icoon + tekst */
     .shape-option {
       display: flex;
       flex-direction: column;
@@ -118,8 +64,8 @@
     .shape-icon {
       width: 70px;
       height: 70px;
-      border: 2px solid #8ea4c8; /* Lichtblauwe rand */
-      border-radius: 0;
+      border: 2px solid #8ea4c8;
+      border-radius: 0; /* default: rechthoek */
       margin-bottom: 8px;
       background-color: white;
       transition: background-color 0.3s, border-color 0.3s;
@@ -131,22 +77,82 @@
       font-size: 14px;
       color: #1e293b;
       text-align: center;
+      line-height: 1.2;
     }
-    /* Vormspecifiek */
-    .rectangle-icon { /* border-radius: 0; (standaard) */ }
+    /* Specifieke vormen */
+    .rectangle-icon {
+      /* rechthoek/vierkant (border-radius=0) */
+      width: 60px;
+      height: 70px;
+    }
     .circle-icon {
       border-radius: 50%;
     }
+    /* Ellips is hoger dan breed (verticale ellips) */
     .ellipse-icon {
-      border-radius: 50% / 35%;
+      width: 50px;
+      height: 70px;
+      border-radius: 50%;
     }
+    /* Ovaal is breder dan hoog (horizontale ellips) */
     .oval-icon {
-      border-radius: 50% / 45%;
+      width: 70px;
+      height: 50px;
+      border-radius: 50%;
     }
+
     /* Highlight bij selectie */
     .shape-option input[type="radio"]:checked + .shape-icon {
       background-color: #8ea4c8;
       border-color: #5a7eb8;
+    }
+
+    /* Basisinvoer */
+    .input-group {
+      margin-bottom: 25px;
+    }
+    .input-group label {
+      display: block;
+      margin-bottom: 10px;
+      color: #334155;
+      font-weight: 600;
+      font-size: 15px;
+    }
+    .flex-row {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+    .input-group input[type="number"] {
+      width: 80px;
+      padding: 12px 15px;
+      border: 2px solid #cbd5e1;
+      border-radius: 8px;
+      font-size: 16px;
+      text-align: center;
+      transition: all 0.3s ease;
+    }
+    .input-group input[type="number"]:focus {
+      border-color: #001D85;
+      box-shadow: 0 0 0 3px rgba(0, 29, 133, 0.15);
+      outline: none;
+    }
+
+    /* Knoppen (min/plus) */
+    .qty-btn {
+      width: 40px;
+      height: 40px;
+      border: 2px solid #001D85;
+      background: #001D85;
+      color: white;
+      border-radius: 8px;
+      font-size: 20px;
+      cursor: pointer;
+      transition: all 0.2s;
+    }
+    .qty-btn:hover {
+      background: #00155F;
+      color: white;
     }
 
     /* Preview-container */
@@ -160,19 +166,19 @@
       border: 2px solid #e2e8f0;
     }
     #rectangle {
-      background-color: #3b82f6; 
-      border: 2px solid #3b82f6;
+      background-color: #001D85; 
+      border: 2px solid #001D85;
       position: absolute;
       top: 50%;
       left: 50%;
       transform: translate(-50%, -50%);
       transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
     }
-    
-    /* Labels in de preview */
+
+    /* Dimensie-labels */
     .dimension-label {
       position: absolute;
-      background: #3b82f6;
+      background: #001D85;
       color: white;
       padding: 6px 12px;
       border-radius: 6px;
@@ -191,8 +197,8 @@
       top: 50%;
       transform: translateY(-50%);
     }
-    
-    /* Order-sectie: prijs, aantal, bestelknop */
+
+    /* Order-sectie */
     .order-row {
       display: flex;
       align-items: center;
@@ -219,7 +225,6 @@
       font-weight: 700;
       color: #1e293b;
     }
-    
     .quantity-control {
       display: flex;
       align-items: center;
@@ -233,10 +238,9 @@
       border: 2px solid #cbd5e1;
       border-radius: 8px;
     }
-    
     .order-btn {
       padding: 14px 24px;
-      background: #3b82f6;
+      background: #001D85;
       color: white;
       border: none;
       border-radius: 8px;
@@ -250,7 +254,7 @@
       background: #00155F;
       transform: translateY(-2px);
     }
-    
+
     /* Afbeelding */
     .image-section {
       flex: 1;
@@ -265,7 +269,7 @@
       border-radius: 12px;
       box-shadow: 0 8px 25px rgba(0,0,0,0.08);
     }
-    
+
     /* Responsive */
     @media (max-width: 768px) {
       .container {
@@ -285,9 +289,6 @@
       .product-header h1 {
         font-size: 24px;
       }
-      .dimensions-row {
-        flex-direction: column;
-      }
       .order-row {
         flex-direction: column;
         align-items: stretch;
@@ -302,39 +303,39 @@
   <div class="container">
     <div class="config-section">
       <div class="product-header">
-        <h1>Doorzichtig tafelzeil 2mm</h1>
-        <div class="subtitle">(max. 140cm breed)</div>
+        <h1>Vorm Configurator</h1>
+        <div class="subtitle">Vierkant/Rechthoek, Cirkel, Ellips of Ovaal</div>
       </div>
 
-      <!-- VORM-OPTIES (radio buttons) -->
+      <!-- Vormkeuze (horizontaal) -->
       <div class="shape-choices">
         <!-- Rechthoek -->
         <label class="shape-option">
           <input type="radio" name="shape" value="rectangle" checked>
           <div class="shape-icon rectangle-icon"></div>
-          <span class="shape-label">Rechthoek</span>
+          <span class="shape-label">Vierkant/Rechthoek<br>+€0,00</span>
         </label>
         <!-- Cirkel -->
         <label class="shape-option">
           <input type="radio" name="shape" value="circle">
           <div class="shape-icon circle-icon"></div>
-          <span class="shape-label">Cirkel</span>
+          <span class="shape-label">Cirkel<br>+€5,00</span>
         </label>
-        <!-- Ellips -->
+        <!-- Ellips (verticale ellips) -->
         <label class="shape-option">
           <input type="radio" name="shape" value="ellipse">
           <div class="shape-icon ellipse-icon"></div>
-          <span class="shape-label">Ellips</span>
+          <span class="shape-label">Ellips<br>+€5,00</span>
         </label>
-        <!-- Ovaal -->
+        <!-- Ovaal (horizontale ellips) -->
         <label class="shape-option">
           <input type="radio" name="shape" value="oval">
           <div class="shape-icon oval-icon"></div>
-          <span class="shape-label">Ovaal</span>
+          <span class="shape-label">Ovaal<br>+€5,00</span>
         </label>
       </div>
-      
-      <!-- Breedte en Lengte naast elkaar -->
+
+      <!-- Breedte & Lengte -->
       <div class="dimensions-row">
         <!-- Breedte -->
         <div class="input-group">
@@ -355,33 +356,31 @@
           </div>
         </div>
       </div>
-      
-      <!-- Extra lengte checkbox -->
+
+      <!-- Checkbox extra lengte -->
       <div class="input-group">
         <label style="display: flex; align-items: center; gap: 10px;">
           <input type="checkbox" id="extraLength" style="width: 20px; height: 20px;">
-          1% gratis extra (om de mogelijke krimp te compenseren.)
+          Ik wil graag 1% gratis lengte om de mogelijke krimp te compenseren.
         </label>
       </div>
-      
+
       <!-- Preview -->
       <div class="preview-container">
         <div id="rectangle">
-          <!-- Breedte-label onderaan (horizontaal) -->
           <span class="dimension-label horizontal-label" id="widthLabel">100 cm</span>
-          <!-- Lengte-label links (verticaal) -->
           <span class="dimension-label vertical-label" id="lengthLabel">100 cm</span>
         </div>
       </div>
-      
-      <!-- Bestel-sectie: prijs, aantal, bestelknop -->
+
+      <!-- Order-sectie (prijs, aantal, bestelknop) -->
       <div class="order-row">
         <!-- Prijsblok -->
         <div class="price-block">
           <span class="price-label">Totaalprijs</span>
           <span class="price-value" id="price">€31,95</span>
         </div>
-        <!-- Aantal stuks -->
+        <!-- Hoeveelheid -->
         <div class="quantity-control">
           <button class="qty-btn" onclick="adjustQuantity(-1)">-</button>
           <input type="number" id="quantity" value="1" min="1" max="99">
@@ -392,6 +391,7 @@
       </div>
     </div>
     
+    <!-- Afbeelding rechts -->
     <div class="image-section">
       <img src="PLA2100.jpg" alt="Doorzichtig tafelzeil 2mm dik" loading="lazy">
     </div>
@@ -401,154 +401,150 @@
     const CONFIG = {
       maxWidth: 140,
       maxLength: 2000,
-      pricePerM2: 31.95,
-      previewWidth: 250,  // maximale breedte preview-container
-      previewHeight: 200  // maximale hoogte preview-container
+      basePricePerM2: 31.95,
+      shapeExtraPrice: {
+        rectangle: 0,
+        circle: 5,
+        ellipse: 5,
+        oval: 5
+      },
+      previewWidth: 250,
+      previewHeight: 200
     };
-    
-    const elements = {
-      shapeRadios: document.querySelectorAll('input[name="shape"]'),
-      width: document.getElementById('width'),
-      length: document.getElementById('length'),
-      rectangle: document.getElementById('rectangle'),
-      price: document.getElementById('price'),
-      widthLabel: document.getElementById('widthLabel'),
-      lengthLabel: document.getElementById('lengthLabel')
-    };
+
+    // Pak alle elementen
+    const shapeRadios = document.querySelectorAll('input[name="shape"]');
+    const widthInput = document.getElementById('width');
+    const lengthInput = document.getElementById('length');
+    const extraLengthCheck = document.getElementById('extraLength');
+    const quantityInput = document.getElementById('quantity');
+    const rectangleEl = document.getElementById('rectangle');
+    const priceEl = document.getElementById('price');
+    const widthLabel = document.getElementById('widthLabel');
+    const lengthLabel = document.getElementById('lengthLabel');
 
     function calculateDimensions() {
       // Lees invoer
-      let widthVal = Math.min(CONFIG.maxWidth, Math.max(1, parseInt(elements.width.value)));
-      let lengthVal = Math.min(CONFIG.maxLength, Math.max(1, parseInt(elements.length.value)));
-      const hasExtra = document.getElementById('extraLength').checked;
-      const quantity = parseInt(document.getElementById('quantity').value) || 1;
+      let widthVal = clamp(parseInt(widthInput.value), 1, CONFIG.maxWidth);
+      let lengthVal = clamp(parseInt(lengthInput.value), 1, CONFIG.maxLength);
+      const quantity = clamp(parseInt(quantityInput.value), 1, 99);
 
-      // Corrigeer invoervelden
-      elements.width.value = widthVal;
-      elements.length.value = lengthVal;
+      // Pas invoervelden aan als buiten limiet
+      widthInput.value = widthVal;
+      lengthInput.value = lengthVal;
+      quantityInput.value = quantity;
 
-      // +1% gratis visueel toepassen (alleen in preview)
+      const hasExtra = extraLengthCheck.checked;
+      // +1% extra alleen visueel
       const displayW = hasExtra ? widthVal * 1.01 : widthVal;
       const displayL = hasExtra ? lengthVal * 1.01 : lengthVal;
+
+      // Vorm
+      let shape = 'rectangle';
+      shapeRadios.forEach(radio => {
+        if (radio.checked) shape = radio.value;
+      });
 
       // Schaalfactor zodat de vorm in de preview past
       const scale = Math.min(
         CONFIG.previewWidth / displayW,
         CONFIG.previewHeight / displayL
       );
-
-      // Echte pixelwaardes in de preview
       const finalW = displayW * scale;
       const finalL = displayL * scale;
 
-      // Welke vorm is geselecteerd?
-      let shape = 'rectangle';
-      elements.shapeRadios.forEach(radio => {
-        if (radio.checked) shape = radio.value;
-      });
-
+      // Pas de vorm toe
       applyShape(shape, finalW, finalL);
 
-      // Update labels
-      elements.widthLabel.textContent = `${Math.round(displayW)} cm`;
-      elements.lengthLabel.textContent = `${Math.round(displayL)} cm`;
+      // Labels
+      widthLabel.textContent = `${Math.round(displayW)} cm`;
+      lengthLabel.textContent = `${Math.round(displayL)} cm`;
 
-      // Prijsberekening (zonder extra 1%)
-      // (pas evt. de logica aan als vormen extra kosten hebben)
-      const price = ((widthVal / 100) * (lengthVal / 100) * CONFIG.pricePerM2 * quantity).toFixed(2);
-      elements.price.textContent = `€${price}`;
+      // Prijsberekening
+      // Basisprijs (zonder 1% extra)
+      const basePrice = (widthVal / 100) * (lengthVal / 100) * CONFIG.basePricePerM2;
+      // Extra vormkosten
+      const shapeExtra = CONFIG.shapeExtraPrice[shape] || 0;
+      const total = (basePrice + shapeExtra) * quantity;
+
+      priceEl.textContent = `€${total.toFixed(2)}`;
     }
 
-    // Pas de vorm toe in de preview
-    function applyShape(shape, finalW, finalL) {
+    // Vormtoepassing
+    function applyShape(shape, w, h) {
       if (shape === 'rectangle') {
-        // Rechthoek
-        elements.rectangle.style.borderRadius = '0';
-        elements.rectangle.style.width = finalW + 'px';
-        elements.rectangle.style.height = finalL + 'px';
+        rectangleEl.style.borderRadius = '0';
+        rectangleEl.style.width = w + 'px';
+        rectangleEl.style.height = h + 'px';
       }
       else if (shape === 'circle') {
-        // Cirkel => diameter = min(width, height)
-        const diameter = Math.min(finalW, finalL);
-        elements.rectangle.style.width = diameter + 'px';
-        elements.rectangle.style.height = diameter + 'px';
-        elements.rectangle.style.borderRadius = '50%';
+        // Cirkel => diameter = min(w, h)
+        const diameter = Math.min(w, h);
+        rectangleEl.style.width = diameter + 'px';
+        rectangleEl.style.height = diameter + 'px';
+        rectangleEl.style.borderRadius = '50%';
       }
       else if (shape === 'ellipse') {
-        // Ellips
-        elements.rectangle.style.width = finalW + 'px';
-        elements.rectangle.style.height = finalL + 'px';
-        elements.rectangle.style.borderRadius = '50%';
+        // Verticale ellips (gewoon border-radius=50%)
+        rectangleEl.style.width = w + 'px';
+        rectangleEl.style.height = h + 'px';
+        rectangleEl.style.borderRadius = '50%';
       }
       else if (shape === 'oval') {
-        // Ovaal => iets andere verhoudingen dan ellipse, maar technisch hetzelfde
-        elements.rectangle.style.width = finalW + 'px';
-        elements.rectangle.style.height = finalL + 'px';
-        elements.rectangle.style.borderRadius = '50% / 45%';
+        // Horizontale ellips (iets andere verhoudingen, maar we doen '50%' + breedte/hoogte)
+        rectangleEl.style.width = w + 'px';
+        rectangleEl.style.height = h + 'px';
+        rectangleEl.style.borderRadius = '50%';
       }
     }
 
-    // Breedte aanpassen via knoppen
-    function adjustWidth(change) {
-      const input = elements.width;
-      let newVal = parseInt(input.value) + change;
-      if (newVal < 1) newVal = 1;
-      if (newVal > CONFIG.maxWidth) newVal = CONFIG.maxWidth;
-      input.value = newVal;
+    // Functie om min/max af te dwingen
+    function clamp(value, min, max) {
+      if (isNaN(value)) return min;
+      return Math.max(min, Math.min(value, max));
+    }
+
+    // Min/plus voor breedte
+    function adjustWidth(delta) {
+      let val = parseInt(widthInput.value) + delta;
+      widthInput.value = clamp(val, 1, CONFIG.maxWidth);
       calculateDimensions();
     }
 
-    // Lengte aanpassen via knoppen
-    function adjustLength(change) {
-      const input = elements.length;
-      let newVal = parseInt(input.value) + change;
-      if (newVal < 1) newVal = 1;
-      if (newVal > CONFIG.maxLength) newVal = CONFIG.maxLength;
-      input.value = newVal;
+    // Min/plus voor lengte
+    function adjustLength(delta) {
+      let val = parseInt(lengthInput.value) + delta;
+      lengthInput.value = clamp(val, 1, CONFIG.maxLength);
       calculateDimensions();
     }
 
-    // Aantal aanpassen
-    function adjustQuantity(change) {
-      const input = document.getElementById('quantity');
-      let newVal = parseInt(input.value) + change;
-      if (newVal < 1) newVal = 1;
-      if (newVal > 99) newVal = 99;
-      input.value = newVal;
+    // Min/plus voor aantal
+    function adjustQuantity(delta) {
+      let val = parseInt(quantityInput.value) + delta;
+      quantityInput.value = clamp(val, 1, 99);
       calculateDimensions();
     }
 
-    // Init + eventlisteners
-    window.addEventListener('load', calculateDimensions);
-    document.querySelectorAll('input').forEach(el => {
-      el.addEventListener('input', calculateDimensions);
-    });
-
-  </script>
-
-  <!-- PostMessage-script voor iFrame-communicatie (Child/Configurator) -->
-  <script>
-    function resizeIframe() {
-      const newHeight = document.body.scrollHeight;
-      const message = {
-        action: 'RESIZE',
-        height: newHeight
-      };
-      window.parent.postMessage(JSON.stringify(message), '*');
-    }
-    
-    // Na elke wijziging en na het laden => resize
+    // Init
     window.addEventListener('load', () => {
-      calculateDimensions(); // Bereken meteen de afmetingen
-      resizeIframe();        
+      calculateDimensions();
+      resizeIframe();
     });
 
-    document.querySelectorAll('input, select').forEach(el => {
+    // Eventlisteners voor alles
+    document.querySelectorAll('input').forEach(el => {
       el.addEventListener('input', () => {
         calculateDimensions();
         resizeIframe();
       });
     });
+
+    // iFrame-resize bericht
+    function resizeIframe() {
+      const newHeight = document.body.scrollHeight;
+      const message = { action: 'RESIZE', height: newHeight };
+      window.parent.postMessage(JSON.stringify(message), '*');
+    }
   </script>
 </body>
 </html>
